@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     ### for processing data-all once!
 
-    ### data = pd.read_csv('data-all.csv')
+    data = pd.read_csv('data-all.csv')
 
     # Initialize the clusterer and perform predictions
     clusterer = ClusteringAlgo()
@@ -17,12 +17,12 @@ if __name__ == "__main__":
     # Example for processing a DataFrame
     transformed_data = run(data)
     print("Transformed Data:")
-    print(transformed_data.head())
+    print(transformed_data.columns, transformed_data.head())
+    transformed_data.to_csv('clustered_data_all.csv', index=False, header=True)
 
-    # transformed_data.to_csv("clustered_data_all.csv", index = False)
-
-    ### Example for processing a single row
+   ### Example for processing a single row
     example_row = data.iloc[0].to_dict()
     transformed_row = run(example_row)
     print("Transformed Row:")
     print(transformed_row)
+   
