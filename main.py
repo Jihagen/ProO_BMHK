@@ -5,8 +5,11 @@ from clusterer import Clusterer
 
 # Example usage
 if __name__ == "__main__":
-    # Load some example data (replace this with actual data)
-    data = pd.read_csv('data-all.csv')
+    # Load data, Replace with actual input data! 
+
+    ### for processing data-all once!
+
+    ### data = pd.read_csv('data-all.csv')
 
     # Initialize the clusterer and perform predictions
     clusterer = ClusteringAlgo()
@@ -16,7 +19,9 @@ if __name__ == "__main__":
     print("Transformed Data:")
     print(transformed_data.head())
 
-    # Example for processing a single row
+    # transformed_data.to_csv("clustered_data_all.csv", index = False)
+
+    ### Example for processing a single row
     example_row = data.iloc[0].to_dict()
     transformed_row = run(example_row)
     print("Transformed Row:")
