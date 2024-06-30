@@ -2,6 +2,8 @@ import pandas as pd
 from clusterer_pipeline import ClusteringAlgo, run
 from data_transformer import DataTransformer
 from clusterer import Clusterer
+from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual
+
 
 # Example usage
 if __name__ == "__main__":
@@ -25,4 +27,12 @@ if __name__ == "__main__":
     transformed_row = run(example_row)
     print("Transformed Row:")
     print(transformed_row)
+
+    ### Example for calculating a shortest path for a cluster
+    #graph_times = pd.read_csv("ARIS DATAFRAME")
+    #t = prep(graph_times)
+    #mat = adjacency(t)
+    #time, route = dijkstra_component(mat)
+    #print("required time for the shortest path: " + str(time))
+    #visual(route)
    
