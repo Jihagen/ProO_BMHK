@@ -138,12 +138,3 @@ def visual(route):
   nx.draw_networkx_edges(graph, pos)
   plt.title('Shortest path for this cluster')
   plt.show()
-
-
-#graph_times = pd.read_csv("/content/drive/MyDrive/ProO/data/test.csv")
-
-#t = prep(graph_times)
-#mat = adjacency(t)
-#time, route = dijkstra_component(mat)
-#print(time)
-#visual(route)
