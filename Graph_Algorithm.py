@@ -4,16 +4,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import heapq
 
-from google.colab import drive
-drive.mount('/content/drive')
-
 def prep(graph_times):
   #Required dataframes are fetched and prepared:
   #pos_data (Node pairs and their positions)
   #graph_times (Table with edge_names and the corresponding times (still example times Cluster 02))
   #factors (Node pairs and the weights with which the times need to be multiplied)"
 
-  pos_data = pd.read_csv("/content/drive/MyDrive/ProO/data/graph_cleaned_weighted.csv")
+  pos_data = pd.read_csv("graph_cleaned_weighted.csv")
   pos_data = pos_data.drop_duplicates()
 
   graph_times = graph_times.drop(columns=graph_times.columns[0])
@@ -21,7 +18,7 @@ def prep(graph_times):
   graph_times.columns = g
 
   h = ["Node A", "Node B", "Counter", "Counter_normalized"]
-  factors = pd.read_csv("/content/drive/MyDrive/ProO/data/Knotenpaare_normalisiert.csv", header=None, names=h)
+  factors = pd.read_csv("Knotenpaare_normalisiert.csv", header=None, names=h)
   factors = factors.drop(index=0)
 
   #Merge graph_times and pos_data on edge_names
@@ -115,7 +112,7 @@ def dijkstra_component(adj_matrix):
 
 def visual(route):
   #Prepare necessary dataframes
-  pos_data = pd.read_csv("/content/drive/MyDrive/ProO/data/graph_cleaned_weighted.csv")
+  pos_data = pd.read_csv("graph_cleaned_weighted.csv")
   pos_data = pos_data.drop_duplicates()
   df_vis = pd.DataFrame()
   df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])
