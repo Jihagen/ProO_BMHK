@@ -13,7 +13,7 @@ def prep(graph_times):
   pos_data = pd.read_csv("graph_cleaned_weighted.csv")
   pos_data = pos_data.drop_duplicates()
 
-  graph_times = graph_times.drop(columns=graph_times.columns[0])
+  #graph_times = graph_times.drop(columns=graph_times.columns[0])
   g = ["Edge name", "times"]
   graph_times.columns = g
 

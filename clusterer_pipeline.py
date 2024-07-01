@@ -40,7 +40,7 @@ class ClusteringAlgo:
             second_level_clusterer = self.second_level_clusterers[first_level_cluster]
             second_level_cluster = second_level_clusterer.predict(second_level_features)[0]
         
-        row['first_level_cluster'] = first_level_cluster
+        row['time_based_cluster'] = first_level_cluster
         row['second_level_cluster'] = second_level_cluster
         
         return row
