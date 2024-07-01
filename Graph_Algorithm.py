@@ -105,7 +105,7 @@ def dijkstra(adj_matrix, start):
 
 def dijkstra_component(adj_matrix):
   #Call Dijkstra with adjusted values (shifted by 1 due to the adjacency matrix)
-  w_s, t, path = dijkstra(mat, 93)
+  w_s, t, path = dijkstra(adj_matrix, 93)
   r = path[161]
   route = [(r[i]+1, r[i+1]+1) for i in range(len(r) - 1)]
   return t[161], route
