@@ -41,7 +41,8 @@ class DataTransformer:
         # Select all features except the original cyclic ones, date columns, and the constant column
         features_to_exclude = ['Unnamed: 1045', 'Unnamed: 1046', 'Unnamed: 1047', 'date']
         self.features = data.columns.difference(features_to_exclude)
-
+        
+        processed_data = data.copy()
         # Apply log transformation if needed
         if self.log_transform:
             # Add a small constant to avoid log(0) issues
@@ -50,7 +51,7 @@ class DataTransformer:
         # Standardize the features
         data_scaled = pd.DataFrame(self.scaler.fit_transform(data[self.features]), columns=self.features, index=data.index)
 
-        return data_scaled, data
+        return data_scaled, processed_data
 
     def transform(self, data):
         data = data.copy()  # Make a copy to avoid SettingWithCopyWarning
@@ -77,6 +78,7 @@ class DataTransformer:
         data.loc[:, 'time_sin'] = time_sin
         data.loc[:, 'time_cos'] = time_cos
 
+        processed_data = data.copy()
         # Apply log transformation if needed
         if self.log_transform:
             # Add a small constant to avoid log(0) issues
@@ -85,4 +87,4 @@ class DataTransformer:
         # Standardize the features using the previously fitted scaler
         data_scaled = pd.DataFrame(self.scaler.transform(data[self.features]), columns=self.features, index=data.index)
 
-        return data_scaled, data
+        return data_scaled, processed_data

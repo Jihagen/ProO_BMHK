@@ -8,11 +8,11 @@ class ClusteringAlgo:
 
     @staticmethod
     def load_models(path='models'):
-        with open(f'{path}/data_transformer.pkl', 'rb') as f:
+        with open(f'{path}/data_transformer(1).pkl', 'rb') as f:
             transformer = pickle.load(f)
-        with open(f'{path}/first_level_clusterer.pkl', 'rb') as f:
+        with open(f'{path}/first_level_clusterer(1).pkl', 'rb') as f:
             first_level_clusterer = pickle.load(f)
-        with open(f'{path}/second_level_clusterers.pkl', 'rb') as f:
+        with open(f'{path}/second_level_clusterers(1).pkl', 'rb') as f:
             second_level_clusterers = pickle.load(f)
         return transformer, first_level_clusterer, second_level_clusterers
 

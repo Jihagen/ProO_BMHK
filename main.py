@@ -24,7 +24,8 @@ if __name__ == "__main__":
     transformed_data.to_csv('clustered_data_all.csv', index=False, header=True)
     '''
    ### Example for processing a single row
-    example_row = data.iloc[0].to_dict()
+    example_row = data.sample(n=1)
+    
     transformed_row = run(example_row)
     print("Transformed Row:")
     print(transformed_row)
@@ -40,6 +41,8 @@ if __name__ == "__main__":
     t = prep(graph_times)
     mat = adjacency(t)
     time, route = dijkstra_component(mat)
-    print("required time for the shortest path: " + str(time))
+    print("required time for the shortest path: " + str(time*60) + "minutes")
     visual(route)
-   
+
+   # print(example_row)
+    # print(transformed_row)
