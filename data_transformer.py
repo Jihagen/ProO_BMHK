@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 
 class DataTransformer:
-    def __init__(self, log_transform=False):
+    def __init__(self, log_transform=True):
         self.scaler = StandardScaler()
         self.log_transform = log_transform
         self.features = None

@@ -13,7 +13,7 @@ def prep(graph_times):
   pos_data = pd.read_csv("graph_cleaned_weighted.csv")
   pos_data = pos_data.drop_duplicates()
 
-  graph_times = graph_times.drop(columns=graph_times.columns[0])
+ # graph_times = graph_times.drop(columns=graph_times.columns[0])
   g = ["Edge name", "times"]
   graph_times.columns = g
 
@@ -110,7 +110,7 @@ def dijkstra_component(adj_matrix):
   route = [(r[i]+1, r[i+1]+1) for i in range(len(r) - 1)]
   return t[161], route
 
-def visual(route):
+def visual(route, cluster):
   #Prepare necessary dataframes
   pos_data = pd.read_csv("graph_cleaned_weighted.csv")
   pos_data = pos_data.drop_duplicates()
@@ -136,5 +136,5 @@ def visual(route):
   pos = nx.get_node_attributes(graph, 'pos')
   nx.draw_networkx_nodes(graph, pos=pos, node_size=30, node_color='blue')
   nx.draw_networkx_edges(graph, pos)
-  plt.title('Shortest path for this cluster' + str(cluster))
+  plt.title('Shortest path for cluster: ' + str(cluster))
   plt.show()
