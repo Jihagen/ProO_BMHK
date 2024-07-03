@@ -49,8 +49,8 @@ class ClusteringAlgo:
 
     def dataframe_prediction(self, df):
         # Combine train data with the new data
-        combined_data = pd.concat([df, self.train_data], ignore_index=False)
-        
+        combined_data = pd.concat([df, self.train_data], ignore_index=True)
+        print(combined_data.head())
         # Transform the combined data
         data_scaled, transformed_combined_data = self.transformer.transform(combined_data)
         
