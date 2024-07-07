@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from 'knotenpaare (1)' import knotenpaare
+from knotenpaare_neu import knotenpaare
 from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual
 
 def similarity_optimality:
