@@ -1,4 +1,7 @@
-
+import pyplot as plt
+import numpy as np
+from Knotenpaare(1) import knotenpaare
+from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual
 
 def similarity_optimality:
   normalization = np.linspace(0, 1, 20)
