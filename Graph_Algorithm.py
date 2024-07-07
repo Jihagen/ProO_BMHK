@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import heapq
 
-def prep(graph_times):
+def prep(graph_times, factors):
   #Required dataframes are fetched and prepared:
   #pos_data (Node pairs and their positions)
   #graph_times (Table with edge_names and the corresponding times (still example times Cluster 02))
@@ -18,8 +18,7 @@ def prep(graph_times):
   graph_times.columns = g
 
   h = ["Node A", "Node B", "Counter", "Counter_normalized"]
-  factors = pd.read_csv("Knotenpaare_normalisiert.csv", header=None, names=h)
-  factors = factors.drop(index=0)
+  factors.columns = h
 
   #Merge graph_times and pos_data on edge_names
   pos_data["Edge name"] = pos_data["Edge name"].astype(str)
