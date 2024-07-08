@@ -104,7 +104,9 @@ class ClusterWeights:
             half_region_size = min(prediction_position, abs(length - prediction_position))  # the region now only consists of +- rows to the closer margin
         start_index = prediction_position - half_region_size
         end_index = prediction_position + half_region_size
-        return table_sorted.iloc[start_index:end_index + 1]  # select header row and desired rows
+        dynamic_cluster = table_sorted.iloc[start_index:end_index + 1]
+        print(dynamic_cluster)
+        return dynamic_cluster # select header row and desired rows
     
     def weights_for_dynamic_cluster(self, cluster, prediction):
         dynamic_table = self.create_dynamic_cluster(cluster, prediction)
