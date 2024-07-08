@@ -61,7 +61,11 @@ if __name__ == "__main__":
     ### Extract Information
     weights = ClusterWeights('clustered_data_all.csv','distance_neu.csv' )
     cluster = weights.generate_cluster_identifier(transformed_row.iloc[0])
-    graph_times = weights. get_lookup_table(cluster)
+    #graph_times = weights.get_lookup_table(cluster)
+
+    graph_times = weights.weights_for_dynamic_cluster(cluster, transformed_row.iloc[0])
+
+    
 
 
     ### Example for calculating a shortest path for a cluster

@@ -9,8 +9,7 @@ class ClusterWeights:
                                          names=['Edge name', 'first node', 'second node', 'X of A', 'X of B', 'Y of A', 'Y of B',
                                                 'avg speed', 'median', 'distance'])
         # Create unique clusters
-        self.clustered_data_all['cluster'] = self.clustered_data_all['time_based_cluster'].astype(str) + \
-                                             self.clustered_data_all['second_level_cluster'].astype(str)
+        self.clustered_data_all['cluster'] = self.clustered_data_all['time_based_cluster'].astype(str) + self.clustered_data_all['second_level_cluster'].astype(str)
         self.unique_entries_list = self.clustered_data_all['cluster'].unique().tolist()
         
         # Generate lookup tables
@@ -21,10 +20,10 @@ class ClusterWeights:
         for cluster in self.unique_entries_list:
             current_cluster = self.clustered_data_all[self.clustered_data_all['cluster'] == cluster]
             table_name = 'cluster_' + cluster
-            lookup_tables[table_name] = self._weights(current_cluster)
+            lookup_tables[table_name] = self.weights(current_cluster)
         return lookup_tables
     
-    def _weights(self, cluster):
+    def weights(self, cluster):
         # Step 1: mean per edge in the cluster
         columns_to_exclude = ['Unnamed: 1045', 'Unnamed: 1046', 'Unnamed: 1047', 'date', 'weekday', 'is_weekend',
                               'time_sin', 'time_cos', 'time_based_cluster', 'second_level_cluster', 'cluster']
@@ -81,13 +80,44 @@ class ClusterWeights:
         table_name = 'cluster_' + cluster
         return self.lookup_tables.get(table_name, None)
     
-     
+    def select_cluster_rows(self, cluster):
+        current_cluster = self.clustered_data_all[self.clustered_data_all['cluster'] == cluster]
+        return current_cluster
+    
+    def create_dynamic_cluster(self, cluster, prediction): 
+        table = self.select_cluster_rows(cluster)
+        table.loc[30000] = prediction  # given row is added with index 30000, which is not used in any cluster
+        table['Row_average'] = table.iloc[:, :-10].mean(axis=1)  # take mean of row, ignoring those columns that were only relevant for clustering
+        print(table)
+        table_sorted = table.sort_values(by='Row_average')  # sort table
+        prediction_index = 30000
+        prediction_position = table_sorted.index.get_loc(prediction_index)  # at which position is prediction row?
+        length = len(table_sorted) - 1
+        ten_percent = int(np.ceil(0.1 * length))
+        half_region_size = ten_percent
+        
+        # Is our row in the margin area (are there fewer than 10% rows above/below)?
+        upper_margin = (ten_percent >= prediction_position)
+        lower_margin = (length - ten_percent <= prediction_position)
+        if upper_margin or lower_margin:
+            # Margin area:
+            half_region_size = min(prediction_position, abs(length - prediction_position))  # the region now only consists of +- rows to the closer margin
+        start_index = prediction_position - half_region_size
+        end_index = prediction_position + half_region_size
+        return table_sorted.iloc[start_index:end_index + 1]  # select header row and desired rows
+    
+    def weights_for_dynamic_cluster(self, cluster, prediction):
+        dynamic_table = self.create_dynamic_cluster(cluster, prediction)
+        edges_time_df = self.weights(dynamic_table)
+        return edges_time_df
+    
     @staticmethod
     def generate_cluster_identifier(row):
         """
         Generate cluster identifier based on time_based_cluster and second_level_cluster information from a DataFrame row.
         """
         return str(row['time_based_cluster']) + str(row['second_level_cluster'])
+
 
 '''
 ## Example Usage:
