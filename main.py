@@ -5,6 +5,7 @@ from data_transformer import DataTransformer
 from clusterer import Clusterer
 from weights import ClusterWeights
 from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual
+from knotenpaare_neu import knotenpaare
 
 
 # Example usage
@@ -68,11 +69,20 @@ if __name__ == "__main__":
     cluster = weights.generate_cluster_identifier(transformed_row)
     print(cluster)
     graph_times = weights. get_lookup_table(cluster)
+<<<<<<< HEAD
     graph_times = pd.DataFrame(graph_times)
     print(graph_times)
 
     ### Example for calculating a shortest path for a cluster
     fac = knotenpaare(1)
+=======
+
+    #Calculate similarity factor
+    fac = knotenpaare(1)
+
+
+    ### Example for calculating a shortest path for a cluster
+>>>>>>> 01c4c743024174405b3b3ce6e1927c87e3d1994c
     t = prep(graph_times, fac)
     mat = adjacency(t)
     time, route = dijkstra_component(mat)

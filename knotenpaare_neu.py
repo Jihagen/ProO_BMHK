@@ -9,7 +9,6 @@ route_all = pd.read_csv("route-all.csv", names = range(100))
 
 def knotenpaare(t):
   # Path to the file
-  #file_path = '/content/drive/MyDrive/ProO/data/route-all.csv'
   file_path = 'route-all.csv'
 
   # Dictionary to store the edges and their counters
@@ -58,11 +57,11 @@ def knotenpaare(t):
   })
   return normalized_df
   # Save DataFrames as CSV
-  #output_file_path = '/content/drive/MyDrive/ProO/data/Knotenpaare_normalisiert.csv'
-
-  output_file_path = 'Knotenpaare_normalisiert.csv'
+  '''
+  output_file_path = '/content/drive/MyDrive/ProO/data/Knotenpaare_normalisiert.csv'
   normalized_df.to_csv(output_file_path, index=False)
 
   print(f'Die normalisierten Knotenpaare wurden erfolgreich in {output_file_path} gespeichert.')
+'''
 #hier werte zwischen 0 und 1 eingeben:
 knotenpaare(1)
