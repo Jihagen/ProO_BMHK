@@ -6,6 +6,7 @@ from clusterer import Clusterer
 from weights import ClusterWeights
 from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual
 from knotenpaare_neu import knotenpaare
+from similarity_vs_optimality import similarity_optimality
 
 
 # Example usage
@@ -59,32 +60,20 @@ if __name__ == "__main__":
 
 
 
-    example_row = data.iloc[0].to_dict()
-    transformed_row = run(pd.DataFrame([example_row]))
-    print("Transformed Row:")
-    print(transformed_row)
-
     ### Extract Information
     weights = ClusterWeights('clustered_data_all.csv','distance_neu.csv' )
-    cluster = weights.generate_cluster_identifier(transformed_row)
-    print(cluster)
+    cluster = weights.generate_cluster_identifier(transformed_row.iloc[0])
     graph_times = weights. get_lookup_table(cluster)
-<<<<<<< HEAD
-    graph_times = pd.DataFrame(graph_times)
-    print(graph_times)
-
-    ### Example for calculating a shortest path for a cluster
-    fac = knotenpaare(1)
-=======
 
     #Calculate similarity factor
     fac = knotenpaare(1)
 
-
     ### Example for calculating a shortest path for a cluster
->>>>>>> 01c4c743024174405b3b3ce6e1927c87e3d1994c
     t = prep(graph_times, fac)
     mat = adjacency(t)
     time, route = dijkstra_component(mat)
-    print("required time for the shortest path: " + str(time))
-    visual(route)
+    print(f"Identified {formatted_weekday} at {time_formatted} as cluster: {cluster}")
+    print("required time for the shortest path: " + str(time*60) + " minutes")
+    visual(route,cluster)
+
+    similarity_optimality(graph_times)
