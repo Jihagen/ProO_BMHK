@@ -50,7 +50,7 @@ def adjacency(tab):
     n = max(max(list(tab["Node A"])), max(list(tab["Node B"])))
 
     #Initialize an empty matrix
-    adj_matrix = np.zeros((n, n, 2))
+    adj_matrix = np.full((n, n, 2), float('inf'))
 
     #Fill the matrix with values
     for _, row in tab.iterrows():
@@ -59,7 +59,7 @@ def adjacency(tab):
         new = [row['weights'], row['times']]
 
         #Check if the existing value is smaller
-        if adj_matrix[i][j][0] == 0:
+        if adj_matrix[i][j][0] == float('inf'):
             adj_matrix[i][j] = new
         elif new[0] < adj_matrix[i][j][0]:
             adj_matrix[i][j] = new
@@ -88,7 +88,7 @@ def dijkstra(adj_matrix, start):
 
         for neighbor, weight in enumerate(adj_matrix[current_node]):
             # check if there is an edge
-            if weight[0] > 0:
+            if weight[0] != float('inf'):
                 # Calculate new weights and times
                 w = current_weight + weight[0]
                 t = current_time + weight[1]
