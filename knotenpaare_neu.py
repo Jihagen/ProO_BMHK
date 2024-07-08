@@ -66,6 +66,3 @@ def knotenpaare(t):
 '''
 #hier werte zwischen 0 und 1 eingeben:
 knotenpaare(0.2)
-
-#hier werte zwischen 0 und 1 eingeben:
-knotenpaare(0.2)
