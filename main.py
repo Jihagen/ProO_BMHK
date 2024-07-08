@@ -58,16 +58,23 @@ if __name__ == "__main__":
 
 
 
+    example_row = data.iloc[0].to_dict()
+    transformed_row = run(pd.DataFrame([example_row]))
+    print("Transformed Row:")
+    print(transformed_row)
+
     ### Extract Information
     weights = ClusterWeights('clustered_data_all.csv','distance_neu.csv' )
-    cluster = weights.generate_cluster_identifier(transformed_row.iloc[0])
+    cluster = weights.generate_cluster_identifier(transformed_row)
+    print(cluster)
     graph_times = weights. get_lookup_table(cluster)
-
+    graph_times = pd.DataFrame(graph_times)
+    print(graph_times)
 
     ### Example for calculating a shortest path for a cluster
-    t = prep(graph_times)
+    fac = knotenpaare(1)
+    t = prep(graph_times, fac)
     mat = adjacency(t)
     time, route = dijkstra_component(mat)
-    print(f"Identified {formatted_weekday} at {time_formatted} as cluster: {cluster}")
-    print("required time for the shortest path: " + str(time*60) + " minutes")
-    visual(route,cluster)
+    print("required time for the shortest path: " + str(time))
+    visual(route)
