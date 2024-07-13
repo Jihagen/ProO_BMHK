@@ -27,8 +27,8 @@ def knotenpaare(t):
               edge = (nodes[i], nodes[i + 1])
               edge_count[edge] += 1
 
-  print(f"Number of unique edges: {len(edge_count)}")
-  print(f"Lat row: {last_row}")
+  #print(f"Number of unique edges: {len(edge_count)}")
+  #print(f"Lat row: {last_row}")
   # Normalize the edges
   normalized = {edge: 1 - ((count / 3212)*t) for edge, count in edge_count.items()}
 
