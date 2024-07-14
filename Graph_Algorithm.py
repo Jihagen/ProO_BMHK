@@ -111,29 +111,130 @@ def dijkstra_component(adj_matrix):
 
 def visual(route, cluster):
   #Prepare necessary dataframes
-  pos_data = pd.read_csv("graph_cleaned_weighted.csv")
+  pos_data = pd.read_csv("graph_imp_weighted_1.csv")
   pos_data = pos_data.drop_duplicates()
   df_vis = pd.DataFrame()
   df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])
   df_vis['X'] = list(pos_data['X of A']) + list(pos_data['X of B'])
   df_vis['Y'] = list(pos_data['Y of A']) + list(pos_data['Y of B'])
   df_nodes = df_vis.drop_duplicates()
-  graph = nx.DiGraph()
 
-
+  graph = nx.Graph()
   #Add nodes with their positions
   for index, row in df_nodes.iterrows():
       graph.add_node(row['Nodes'], pos=(row['X'] / 10, row['Y'] / 10))
 
-  pos = nx.get_node_attributes(graph, 'pos')
+  df_edges = pd.DataFrame()
+  df_edges['Node A'] = pos_data['Node A']
+  df_edges['Node B'] = pos_data['Node B']
+  df_edges['edges'] = list(zip(pos_data['Node A'], pos_data['Node B']))
+  df_edges['Colors'] = ['black'] * len(pos_data['Edge name'])
+  df_edges['Width'] = [1] * len(pos_data['Edge name'])
+  df_edges.drop_duplicates()
 
-  for edge in route:
-      graph.add_edge(edge[0], edge[1])
+  df_edges.loc[df_edges['edges'].isin(route), 'Colors'] = 'red'
+  df_edges.loc[df_edges['edges'].isin(route), 'Width'] = 5
+
+  graph.add_edges_from(df_edges['edges'])
+
 
   #Plot the graph
   plt.figure(figsize=(20, 16))
   pos = nx.get_node_attributes(graph, 'pos')
-  nx.draw_networkx_nodes(graph, pos=pos, node_size=30, node_color='blue')
-  nx.draw_networkx_edges(graph, pos)
+  nx.draw_networkx_nodes(graph, pos=pos, node_size=30, node_color='black')
+
+  nx.draw_networkx_edges(graph, pos=pos, edgelist=df_edges['edges'].values, edge_color=df_edges['Colors'],
+                         width=df_edges['Width'])
+
+  #nx.draw_networkx_edges(graph, pos, edge_color='red', width=3)
   plt.title('Shortest path for cluster: ' + str(cluster))
   plt.show()
+
+def visual_3(route_1, route_2, route_3, text):
+    pos_data = pd.read_csv("graph_imp_weighted_1.csv")
+    pos_data = pos_data.drop_duplicates()
+    df_vis = pd.DataFrame()
+    df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])
+    df_vis['X'] = list(pos_data['X of A']) + list(pos_data['X of B'])
+    df_vis['Y'] = list(pos_data['Y of A']) + list(pos_data['Y of B'])
+    df_nodes = df_vis.drop_duplicates()
+
+    graph = nx.Graph()
+    # Add nodes with their positions
+    for index, row in df_nodes.iterrows():
+        graph.add_node(row['Nodes'], pos=(row['X'] / 10, row['Y'] / 10))
+
+    df_edges = pd.DataFrame()
+    df_edges['Node A'] = pos_data['Node A']
+    df_edges['Node B'] = pos_data['Node B']
+    df_edges['edges'] = list(zip(pos_data['Node A'], pos_data['Node B']))
+    df_edges['Colors'] = ['black'] * len(pos_data['Edge name'])
+    df_edges['Width'] = [1] * len(pos_data['Edge name'])
+    df_edges.drop_duplicates()
+
+    df_edges.loc[df_edges['edges'].isin(route_1), 'Colors'] = 'red'
+    df_edges.loc[df_edges['edges'].isin(route_1), 'Width'] = 5
+
+    df_edges.loc[df_edges['edges'].isin(route_2), 'Colors'] = 'blue'
+    df_edges.loc[df_edges['edges'].isin(route_2), 'Width'] = 5
+
+    df_edges.loc[df_edges['edges'].isin(route_3), 'Colors'] = 'green'
+    df_edges.loc[df_edges['edges'].isin(route_3), 'Width'] = 5
+
+    graph.add_edges_from(df_edges['edges'])
+
+    # Plot the graph
+    plt.figure(figsize=(20, 16))
+    pos = nx.get_node_attributes(graph, 'pos')
+    nx.draw_networkx_nodes(graph, pos=pos, node_size=30, node_color='black')
+
+    nx.draw_networkx_edges(graph, pos=pos, edgelist=df_edges['edges'].values, edge_color=df_edges['Colors'],
+                           width=df_edges['Width'])
+
+    # nx.draw_networkx_edges(graph, pos, edge_color='red', width=3)
+    plt.text(0.05, 0.95, text, transform=plt.gca().transAxes, fontsize=14,verticalalignment='top')
+
+    plt.show()
+
+def visual_2(route_1, route_2, text):
+    pos_data = pd.read_csv("graph_imp_weighted_1.csv")
+    pos_data = pos_data.drop_duplicates()
+    df_vis = pd.DataFrame()
+    df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])
+    df_vis['X'] = list(pos_data['X of A']) + list(pos_data['X of B'])
+    df_vis['Y'] = list(pos_data['Y of A']) + list(pos_data['Y of B'])
+    df_nodes = df_vis.drop_duplicates()
+
+    graph = nx.Graph()
+    # Add nodes with their positions
+    for index, row in df_nodes.iterrows():
+        graph.add_node(row['Nodes'], pos=(row['X'] / 10, row['Y'] / 10))
+
+    df_edges = pd.DataFrame()
+    df_edges['Node A'] = pos_data['Node A']
+    df_edges['Node B'] = pos_data['Node B']
+    df_edges['edges'] = list(zip(pos_data['Node A'], pos_data['Node B']))
+    df_edges['Colors'] = ['black'] * len(pos_data['Edge name'])
+    df_edges['Width'] = [1] * len(pos_data['Edge name'])
+    df_edges.drop_duplicates()
+
+    df_edges.loc[df_edges['edges'].isin(route_1), 'Colors'] = 'red'
+    df_edges.loc[df_edges['edges'].isin(route_1), 'Width'] = 5
+
+    df_edges.loc[df_edges['edges'].isin(route_2), 'Colors'] = 'blue'
+    df_edges.loc[df_edges['edges'].isin(route_2), 'Width'] = 5
+
+    graph.add_edges_from(df_edges['edges'])
+
+    # Plot the graph
+    plt.figure(figsize=(20, 16))
+    pos = nx.get_node_attributes(graph, 'pos')
+    nx.draw_networkx_nodes(graph, pos=pos, node_size=30, node_color='black')
+
+    nx.draw_networkx_edges(graph, pos=pos, edgelist=df_edges['edges'].values, edge_color=df_edges['Colors'],
+                           width=df_edges['Width'])
+
+    # nx.draw_networkx_edges(graph, pos, edge_color='red', width=3)
+    plt.text(0.05, 0.95, text, transform=plt.gca().transAxes, fontsize=14,verticalalignment='top')
+
+    plt.show()
