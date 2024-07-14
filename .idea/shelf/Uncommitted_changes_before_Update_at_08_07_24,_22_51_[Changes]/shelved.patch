@@ -1,0 +1,95 @@
+Index: similarity_vs_optimality.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import matplotlib.pyplot as plt\nimport numpy as np\nfrom knotenpaare_neu import knotenpaare\nfrom Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual\n\ndef similarity_optimality():\n  normalization = np.linspace(0, 1, 20)\n  values = []\n  for t in normalization:\n    k = knotenpaare(t)\n    p = prep(k)\n    a = adjacency(p)\n    t, _= dijkstra_component(a)\n    values.append(t)\n\n  plt.plot(normalization, values, marker='o', linestyle='-')\n  plt.xlabel('Factor')\n  plt.ylabel('Time taken')\n  plt.title('How this similarity component effects the optimality of our shortest path')\n  plt.show()\n \n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/similarity_vs_optimality.py b/similarity_vs_optimality.py
+--- a/similarity_vs_optimality.py	(revision 312ded53c07dbeae1966f61c6957e5ab9dfbab08)
++++ b/similarity_vs_optimality.py	(date 1720471566257)
+@@ -3,19 +3,19 @@
+ from knotenpaare_neu import knotenpaare
+ from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual
+ 
+-def similarity_optimality():
++def similarity_optimality(graph_times):
+   normalization = np.linspace(0, 1, 20)
+   values = []
+   for t in normalization:
+     k = knotenpaare(t)
+-    p = prep(k)
++    p = prep(graph_times, k)
+     a = adjacency(p)
+-    t, _= dijkstra_component(a)
+-    values.append(t)
++    time, r= dijkstra_component(a)
++    values += [time * 60]
+ 
+   plt.plot(normalization, values, marker='o', linestyle='-')
+   plt.xlabel('Factor')
+-  plt.ylabel('Time taken')
++  plt.ylabel('Time taken in minutes')
+   plt.title('How this similarity component effects the optimality of our shortest path')
+   plt.show()
+  
+Index: Graph_Algorithm.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import networkx as nx\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport heapq\n\ndef prep(graph_times, factors):\n  #Required dataframes are fetched and prepared:\n  #pos_data (Node pairs and their positions)\n  #graph_times (Table with edge_names and the corresponding times (still example times Cluster 02))\n  #factors (Node pairs and the weights with which the times need to be multiplied)\"\n\n  pos_data = pd.read_csv(\"graph_cleaned_weighted.csv\")\n  pos_data = pos_data.drop_duplicates()\n\n # graph_times = graph_times.drop(columns=graph_times.columns[0])\n  g = [\"Edge name\", \"times\"]\n  graph_times.columns = g\n\n  h = [\"Node A\", \"Node B\", \"Counter\", \"Counter_normalized\"]\n  factors.columns = h\n\n  #Merge graph_times and pos_data on edge_names\n  pos_data[\"Edge name\"] = pos_data[\"Edge name\"].astype(str)\n  graph_times[\"Edge name\"] = graph_times[\"Edge name\"].astype(str)\n  merged = pd.merge(graph_times, pos_data, on=\"Edge name\")\n  #Create the column \"Pairs\" in merged to merge with factors (Int-Tupel)\n  merged[\"Node A\"] = merged[\"Node A\"].astype(int)\n  merged[\"Node B\"] = merged[\"Node B\"].astype(int)\n  merged[\"Pairs\"] = list(zip(merged['Node A'], merged['Node B']))\n  #Create the column \"Pairs\" in factors to merge with merged (Int-Tupel)\n  factors[\"Node A\"] = factors[\"Node A\"].astype(int)\n  factors[\"Node B\"] = factors[\"Node B\"].astype(int)\n  factors[\"Pairs\"] = list(zip(factors['Node A'], factors['Node B']))\n  factors = factors.drop(columns=['Node A', 'Node B'])\n\n  #Second merge and preparing the columns for the adjacency matrix\n  merged_again = pd.merge(merged, factors, on=\"Pairs\")\n  merged_again = merged_again.drop(columns=[\"X of A\", \"Y of A\", \"X of B\", \"Y of B\", \"Pairs\"])\n  merged_again[\"Counter_normalized\"] = merged_again[\"Counter_normalized\"].astype(float)\n  merged_again[\"times\"] = merged_again[\"times\"].astype(float)\n  merged_again[\"Node A\"] = merged_again[\"Node A\"].astype(int)\n  merged_again[\"Node B\"] = merged_again[\"Node B\"].astype(int)\n  merged_again[\"weights\"] = merged_again[\"Counter_normalized\"] * merged_again[\"times\"]\n\n  return merged_again\n\ndef adjacency(tab):\n    #Get the matrix dimensions\n    n = max(max(list(tab[\"Node A\"])), max(list(tab[\"Node B\"])))\n\n    #Initialize an empty matrix\n    adj_matrix = np.full((n, n, 2), float('inf'))\n\n    #Fill the matrix with values\n    for _, row in tab.iterrows():\n        i = int(row['Node A']) -1\n        j = int(row['Node B']) -1\n        new = [row['weights'], row['times']]\n\n        #Check if the existing value is smaller\n        if adj_matrix[i][j][0] == float('inf'):\n            adj_matrix[i][j] = new\n        elif new[0] < adj_matrix[i][j][0]:\n            adj_matrix[i][j] = new\n\n    return adj_matrix\n\ndef dijkstra(adj_matrix, start):\n    # Initialize weights, times and paths\n    num_nodes = len(adj_matrix)\n    weight_sums = [float('inf')] * num_nodes\n    weight_sums[start] = 0\n    times = [float('inf')] * num_nodes\n    times[start] = 0\n\n    # Initialize priority queue\n    pq = [(0, 0, start)]\n    path_list = [[i] for i in range(num_nodes)]\n\n    # Implementation of Dijkstra's algorithm\n    while pq:\n        # Pop the node with the minimum weight\n        current_weight, current_time, current_node = heapq.heappop(pq)\n        # Check if the current node is already processed\n        if current_weight > weight_sums[current_node]:\n            continue\n\n        for neighbor, weight in enumerate(adj_matrix[current_node]):\n            # check if there is an edge\n            if weight[0] != float('inf'):\n                # Calculate new weights and times\n                w = current_weight + weight[0]\n                t = current_time + weight[1]\n\n                # Update weights and times if a shorter path is found\n                if w < weight_sums[neighbor]:\n                    weight_sums[neighbor] = w\n                    times[neighbor] = t\n                    path_list[neighbor] = path_list[current_node] + list([neighbor])\n                    heapq.heappush(pq, (w, t, neighbor))\n\n    return weight_sums, times, path_list\n\ndef dijkstra_component(adj_matrix):\n  #Call Dijkstra with adjusted values (shifted by 1 due to the adjacency matrix)\n  w_s, t, path = dijkstra(adj_matrix, 93)\n  r = path[161]\n  route = [(r[i]+1, r[i+1]+1) for i in range(len(r) - 1)]\n  return t[161], route\n\ndef visual(route, cluster):\n  #Prepare necessary dataframes\n  pos_data = pd.read_csv(\"graph_cleaned_weighted.csv\")\n  pos_data = pos_data.drop_duplicates()\n  df_vis = pd.DataFrame()\n  df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])\n  df_vis['X'] = list(pos_data['X of A']) + list(pos_data['X of B'])\n  df_vis['Y'] = list(pos_data['Y of A']) + list(pos_data['Y of B'])\n  df_nodes = df_vis.drop_duplicates()\n  graph = nx.DiGraph()\n\n\n  #Add nodes with their positions\n  for index, row in df_nodes.iterrows():\n      graph.add_node(row['Nodes'], pos=(row['X'] / 10, row['Y'] / 10))\n\n  pos = nx.get_node_attributes(graph, 'pos')\n\n  for edge in route:\n      graph.add_edge(edge[0], edge[1])\n\n  #Plot the graph\n  plt.figure(figsize=(20, 16))\n  pos = nx.get_node_attributes(graph, 'pos')\n  nx.draw_networkx_nodes(graph, pos=pos, node_size=30, node_color='blue')\n  nx.draw_networkx_edges(graph, pos)\n  plt.title('Shortest path for cluster: ' + str(cluster))\n  plt.show()\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Graph_Algorithm.py b/Graph_Algorithm.py
+--- a/Graph_Algorithm.py	(revision 312ded53c07dbeae1966f61c6957e5ab9dfbab08)
++++ b/Graph_Algorithm.py	(date 1720471661609)
+@@ -118,15 +118,13 @@
+   df_vis['X'] = list(pos_data['X of A']) + list(pos_data['X of B'])
+   df_vis['Y'] = list(pos_data['Y of A']) + list(pos_data['Y of B'])
+   df_nodes = df_vis.drop_duplicates()
++
+   graph = nx.DiGraph()
+ 
+-
+   #Add nodes with their positions
+   for index, row in df_nodes.iterrows():
+       graph.add_node(row['Nodes'], pos=(row['X'] / 10, row['Y'] / 10))
+ 
+-  pos = nx.get_node_attributes(graph, 'pos')
+-
+   for edge in route:
+       graph.add_edge(edge[0], edge[1])
+ 
+@@ -134,6 +132,6 @@
+   plt.figure(figsize=(20, 16))
+   pos = nx.get_node_attributes(graph, 'pos')
+   nx.draw_networkx_nodes(graph, pos=pos, node_size=30, node_color='blue')
+-  nx.draw_networkx_edges(graph, pos)
+-  plt.title('Shortest path for cluster: ' + str(cluster))
++  nx.draw_networkx_edges(graph, pos, edge_color='red')
++  #plt.title('Shortest path for cluster: ' + str(cluster))
+   plt.show()
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pandas as pd\nimport warnings\nfrom clusterer_pipeline import ClusteringAlgo, run\nfrom data_transformer import DataTransformer\nfrom clusterer import Clusterer\nfrom weights import ClusterWeights\nfrom Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual\nfrom knotenpaare_neu import knotenpaare\n\n\n# Example usage\nif __name__ == \"__main__\":\n   \n\n    data = pd.read_csv('test_split.csv')\n    example_row1 = data.sample(n=1)\n    example_row2 = data.sample(n=1)\n    print(example_row1)\n    print(example_row2)\n    # Initialize the clusterer and perform predictions\n    \n    '''\n    # Example for processing a DataFrame\n    ### change data to data-all.csv to process \n    transformed_data = run(data)\n    print(\"Transformed Data:\")\n    print(transformed_data.columns, transformed_data.head())\n    print(transformed_data.second_level_cluster.unique())\n    transformed_data.to_csv('clustered_data_all.csv', index=False, header=True)\n    '''\n    # Suppress SettingWithCopyWarning\n    pd.options.mode.chained_assignment = None  # default='warn'\n    # Suppress PerformanceWarning\n    warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)\n    # Suppress all warnings (use with caution)\n    warnings.filterwarnings('ignore')\n\n\n\n   ### Example for processing a single row\n    example_row = data.sample(n=1)\n    transformed_row = run(example_row1)\n    print(\"Transformed Row:\")\n    print(transformed_row)\n    weekday = transformed_row['weekday'].iloc[0]\n    time_str = transformed_row['Unnamed: 1047'].iloc[0]\n    time_formatted = f\"{time_str.split('_')[0]}:{time_str.split('_')[1]}\"\n    \n    weekday_dict = {\n        0: \"Monday\",\n        1: \"Tuesday\",\n        2: \"Wednesday\",\n        3: \"Thursday\",\n        4: \"Friday\",\n        5: \"Saturday\",\n        6: \"Sunday\"\n    }\n    formatted_weekday = weekday_dict[weekday]\n\n\n\n    ### Extract Information\n    weights = ClusterWeights('clustered_data_all.csv','distance_neu.csv' )\n    cluster = weights.generate_cluster_identifier(transformed_row.iloc[0])\n    graph_times = weights. get_lookup_table(cluster)\n\n    #Calculate similarity factor\n    fac = knotenpaare(1)\n\n\n    ### Example for calculating a shortest path for a cluster\n    t = prep(graph_times, fac)\n    mat = adjacency(t)\n    time, route = dijkstra_component(mat)\n    print(f\"Identified {formatted_weekday} at {time_formatted} as cluster: {cluster}\")\n    print(\"required time for the shortest path: \" + str(time*60) + \" minutes\")\n    visual(route,cluster)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision 312ded53c07dbeae1966f61c6957e5ab9dfbab08)
++++ b/main.py	(date 1720470259824)
+@@ -6,6 +6,7 @@
+ from weights import ClusterWeights
+ from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual
+ from knotenpaare_neu import knotenpaare
++from similarity_vs_optimality import similarity_optimality
+ 
+ 
+ # Example usage
+@@ -75,3 +76,5 @@
+     print(f"Identified {formatted_weekday} at {time_formatted} as cluster: {cluster}")
+     print("required time for the shortest path: " + str(time*60) + " minutes")
+     visual(route,cluster)
++
++    similarity_optimality(graph_times)

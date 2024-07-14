@@ -1,0 +1,135 @@
+Index: similarity_vs_optimality.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import matplotlib.pyplot as plt\nimport numpy as np\nfrom knotenpaare_neu import knotenpaare\nfrom Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual_3\n\n\ndef similarity_optimality(graph_times):\n  normalization = np.linspace(0, 1, 20)\n  values = []\n  for t in normalization:\n    k = knotenpaare(t)\n    p = prep(graph_times,k )\n    a = adjacency(p)\n    t, _= dijkstra_component(a)\n    values.append(t)\n\n  plt.plot(normalization, values, marker='o', linestyle='-')\n  plt.xlabel('Factor')\n  plt.ylabel('Time taken')\n  plt.title('How this similarity component effects the optimality of our shortest path')\n  plt.show()\n\n\n\ndef visualize_sim_difference(graph_times):\n  k_1 = knotenpaare(1)\n  p_1 = prep(graph_times, k_1)\n  a_1 = adjacency(p_1)\n  time_1, route_1 = dijkstra_component(a_1)\n\n  k_0 = knotenpaare(0)\n  p_0 = prep(graph_times, k_0)\n  a_0 = adjacency(p_0)\n  time_0, route_0 = dijkstra_component(a_0)\n\n  k_05 = knotenpaare(0.5)\n  p_05 = prep(graph_times, k_05)\n  a_05 = adjacency(p_05)\n  time_05, route_05 = dijkstra_component(a_05)\n\n  visual_3(route_1, route_0, route_05, (\"Rot: Similarity auf 1 Zeit: \" + str(time_1) + \" Blau: Similarity auf 0, Zeit: \"+ str(time_0) + \" Grün: Similarity auf 0.5\" + str(time_05)))\n\n\n#def performance_analysis(graph_times, timestamp):\n\n\n\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/similarity_vs_optimality.py b/similarity_vs_optimality.py
+--- a/similarity_vs_optimality.py	(revision fdc74380791a8f46a1902161773c8c254e37e64d)
++++ b/similarity_vs_optimality.py	(date 1720986981919)
+@@ -1,5 +1,6 @@
+ import matplotlib.pyplot as plt
+ import numpy as np
++import pandas as pd
+ from knotenpaare_neu import knotenpaare
+ from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual_3
+ 
+@@ -41,8 +42,21 @@
+   visual_3(route_1, route_0, route_05, ("Rot: Similarity auf 1 Zeit: " + str(time_1) + " Blau: Similarity auf 0, Zeit: "+ str(time_0) + " Grün: Similarity auf 0.5" + str(time_05)))
+ 
+ 
+-#def performance_analysis(graph_times, timestamp):
++def optimal_time(graph_times, month, code):
++  pos_data = pd.read_csv("graph_imp_weighted.csv")
++  route_df = pd.read_csv("opt_routes_cleaned.csv")
++  l = route_df[route_df["Month"] == month and route_df["Code"]== code]
++  r_df = pd.DataFrame({'Edge_Tuples': l})
+ 
++  pos_data["Node A"] = pos_data["Node A"].astype(int)
++  pos_data["Node B"] = pos_data["Node B"].astype(int)
++  pos_data["Edge_Tuples"] = list(zip(pos_data['Node A'], pos_data['Node B']))
++
++  merged = pd.merge(r_df, pos_data, on="Edge_Tuples")
++  merged = merged.drop(columns=['X of A', 'X of B', 'Y of A', 'Y of B', 'Avg Speed', 'Med Speed'])
++  merged_again = pd.merge(merged, graph_times, on="Edge names")
++  time = merged_again["times"].sum()
++  return time
+ 
+ 
+ 
+Index: Graph_Algorithm.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import networkx as nx\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport heapq\n\ndef prep(graph_times, factors):\n  #Required dataframes are fetched and prepared:\n  #pos_data (Node pairs and their positions)\n  #graph_times (Table with edge_names and the corresponding times (still example times Cluster 02))\n  #factors (Node pairs and the weights with which the times need to be multiplied)\"\n\n  pos_data = pd.read_csv(\"graph_cleaned_weighted.csv\")\n  pos_data = pos_data.drop_duplicates()\n\n # graph_times = graph_times.drop(columns=graph_times.columns[0])\n  g = [\"Edge name\", \"times\"]\n  graph_times.columns = g\n\n  h = [\"Node A\", \"Node B\", \"Counter\", \"Counter_normalized\"]\n  factors.columns = h\n\n  #Merge graph_times and pos_data on edge_names\n  pos_data[\"Edge name\"] = pos_data[\"Edge name\"].astype(str)\n  graph_times[\"Edge name\"] = graph_times[\"Edge name\"].astype(str)\n  merged = pd.merge(graph_times, pos_data, on=\"Edge name\")\n  #Create the column \"Pairs\" in merged to merge with factors (Int-Tupel)\n  merged[\"Node A\"] = merged[\"Node A\"].astype(int)\n  merged[\"Node B\"] = merged[\"Node B\"].astype(int)\n  merged[\"Pairs\"] = list(zip(merged['Node A'], merged['Node B']))\n  #Create the column \"Pairs\" in factors to merge with merged (Int-Tupel)\n  factors[\"Node A\"] = factors[\"Node A\"].astype(int)\n  factors[\"Node B\"] = factors[\"Node B\"].astype(int)\n  factors[\"Pairs\"] = list(zip(factors['Node A'], factors['Node B']))\n  factors = factors.drop(columns=['Node A', 'Node B'])\n\n  #Second merge and preparing the columns for the adjacency matrix\n  merged_again = pd.merge(merged, factors, on=\"Pairs\")\n  merged_again = merged_again.drop(columns=[\"X of A\", \"Y of A\", \"X of B\", \"Y of B\", \"Pairs\"])\n  merged_again[\"Counter_normalized\"] = merged_again[\"Counter_normalized\"].astype(float)\n  merged_again[\"times\"] = merged_again[\"times\"].astype(float)\n  merged_again[\"Node A\"] = merged_again[\"Node A\"].astype(int)\n  merged_again[\"Node B\"] = merged_again[\"Node B\"].astype(int)\n  merged_again[\"weights\"] = merged_again[\"Counter_normalized\"] * merged_again[\"times\"]\n\n  return merged_again\n\ndef adjacency(tab):\n    #Get the matrix dimensions\n    n = max(max(list(tab[\"Node A\"])), max(list(tab[\"Node B\"])))\n\n    #Initialize an empty matrix\n    adj_matrix = np.full((n, n, 2), float('inf'))\n\n    #Fill the matrix with values\n    for _, row in tab.iterrows():\n        i = int(row['Node A']) -1\n        j = int(row['Node B']) -1\n        new = [row['weights'], row['times']]\n\n        #Check if the existing value is smaller\n        if adj_matrix[i][j][0] == float('inf'):\n            adj_matrix[i][j] = new\n        elif new[0] < adj_matrix[i][j][0]:\n            adj_matrix[i][j] = new\n\n    return adj_matrix\n\ndef dijkstra(adj_matrix, start):\n    # Initialize weights, times and paths\n    num_nodes = len(adj_matrix)\n    weight_sums = [float('inf')] * num_nodes\n    weight_sums[start] = 0\n    times = [float('inf')] * num_nodes\n    times[start] = 0\n\n    # Initialize priority queue\n    pq = [(0, 0, start)]\n    path_list = [[i] for i in range(num_nodes)]\n\n    # Implementation of Dijkstra's algorithm\n    while pq:\n        # Pop the node with the minimum weight\n        current_weight, current_time, current_node = heapq.heappop(pq)\n        # Check if the current node is already processed\n        if current_weight > weight_sums[current_node]:\n            continue\n\n        for neighbor, weight in enumerate(adj_matrix[current_node]):\n            # check if there is an edge\n            if weight[0] != float('inf'):\n                # Calculate new weights and times\n                w = current_weight + weight[0]\n                t = current_time + weight[1]\n\n                # Update weights and times if a shorter path is found\n                if w < weight_sums[neighbor]:\n                    weight_sums[neighbor] = w\n                    times[neighbor] = t\n                    path_list[neighbor] = path_list[current_node] + list([neighbor])\n                    heapq.heappush(pq, (w, t, neighbor))\n\n    return weight_sums, times, path_list\n\ndef dijkstra_component(adj_matrix):\n  #Call Dijkstra with adjusted values (shifted by 1 due to the adjacency matrix)\n  w_s, t, path = dijkstra(adj_matrix, 93)\n  r = path[161]\n  route = [(r[i]+1, r[i+1]+1) for i in range(len(r) - 1)]\n  return t[161], route\n\ndef visual(route, cluster):\n  #Prepare necessary dataframes\n  pos_data = pd.read_csv(\"graph_imp_weighted_1.csv\")\n  pos_data = pos_data.drop_duplicates()\n  df_vis = pd.DataFrame()\n  df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])\n  df_vis['X'] = list(pos_data['X of A']) + list(pos_data['X of B'])\n  df_vis['Y'] = list(pos_data['Y of A']) + list(pos_data['Y of B'])\n  df_nodes = df_vis.drop_duplicates()\n\n  graph = nx.Graph()\n  #Add nodes with their positions\n  for index, row in df_nodes.iterrows():\n      graph.add_node(row['Nodes'], pos=(row['X'] / 10, row['Y'] / 10))\n\n  df_edges = pd.DataFrame()\n  df_edges['Node A'] = pos_data['Node A']\n  df_edges['Node B'] = pos_data['Node B']\n  df_edges['edges'] = list(zip(pos_data['Node A'], pos_data['Node B']))\n  df_edges['Colors'] = ['black'] * len(pos_data['Edge name'])\n  df_edges['Width'] = [1] * len(pos_data['Edge name'])\n  df_edges.drop_duplicates()\n\n  df_edges.loc[df_edges['edges'].isin(route), 'Colors'] = 'red'\n  df_edges.loc[df_edges['edges'].isin(route), 'Width'] = 5\n\n  graph.add_edges_from(df_edges['edges'])\n\n\n  #Plot the graph\n  plt.figure(figsize=(20, 16))\n  pos = nx.get_node_attributes(graph, 'pos')\n  nx.draw_networkx_nodes(graph, pos=pos, node_size=30, node_color='black')\n\n  nx.draw_networkx_edges(graph, pos=pos, edgelist=df_edges['edges'].values, edge_color=df_edges['Colors'],\n                         width=df_edges['Width'])\n\n  #nx.draw_networkx_edges(graph, pos, edge_color='red', width=3)\n  plt.title('Shortest path for cluster: ' + str(cluster))\n  plt.show()\n\ndef visual_3(route_1, route_2, route_3, text):\n    pos_data = pd.read_csv(\"graph_imp_weighted_1.csv\")\n    pos_data = pos_data.drop_duplicates()\n    df_vis = pd.DataFrame()\n    df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])\n    df_vis['X'] = list(pos_data['X of A']) + list(pos_data['X of B'])\n    df_vis['Y'] = list(pos_data['Y of A']) + list(pos_data['Y of B'])\n    df_nodes = df_vis.drop_duplicates()\n\n    graph = nx.Graph()\n    # Add nodes with their positions\n    for index, row in df_nodes.iterrows():\n        graph.add_node(row['Nodes'], pos=(row['X'] / 10, row['Y'] / 10))\n\n    df_edges = pd.DataFrame()\n    df_edges['Node A'] = pos_data['Node A']\n    df_edges['Node B'] = pos_data['Node B']\n    df_edges['edges'] = list(zip(pos_data['Node A'], pos_data['Node B']))\n    df_edges['Colors'] = ['black'] * len(pos_data['Edge name'])\n    df_edges['Width'] = [1] * len(pos_data['Edge name'])\n    df_edges.drop_duplicates()\n\n    df_edges.loc[df_edges['edges'].isin(route_1), 'Colors'] = 'red'\n    df_edges.loc[df_edges['edges'].isin(route_1), 'Width'] = 5\n\n    df_edges.loc[df_edges['edges'].isin(route_2), 'Colors'] = 'blue'\n    df_edges.loc[df_edges['edges'].isin(route_2), 'Width'] = 5\n\n    df_edges.loc[df_edges['edges'].isin(route_3), 'Colors'] = 'green'\n    df_edges.loc[df_edges['edges'].isin(route_3), 'Width'] = 5\n\n    graph.add_edges_from(df_edges['edges'])\n\n    # Plot the graph\n    plt.figure(figsize=(20, 16))\n    pos = nx.get_node_attributes(graph, 'pos')\n    nx.draw_networkx_nodes(graph, pos=pos, node_size=30, node_color='black')\n\n    nx.draw_networkx_edges(graph, pos=pos, edgelist=df_edges['edges'].values, edge_color=df_edges['Colors'],\n                           width=df_edges['Width'])\n\n    # nx.draw_networkx_edges(graph, pos, edge_color='red', width=3)\n    plt.text(0.05, 0.95, text, transform=plt.gca().transAxes, fontsize=14,verticalalignment='top')\n\n    plt.show()\n\ndef visual_2(route_1, route_2, text):\n    pos_data = pd.read_csv(\"graph_imp_weighted_1.csv\")\n    pos_data = pos_data.drop_duplicates()\n    df_vis = pd.DataFrame()\n    df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])\n    df_vis['X'] = list(pos_data['X of A']) + list(pos_data['X of B'])\n    df_vis['Y'] = list(pos_data['Y of A']) + list(pos_data['Y of B'])\n    df_nodes = df_vis.drop_duplicates()\n\n    graph = nx.Graph()\n    # Add nodes with their positions\n    for index, row in df_nodes.iterrows():\n        graph.add_node(row['Nodes'], pos=(row['X'] / 10, row['Y'] / 10))\n\n    df_edges = pd.DataFrame()\n    df_edges['Node A'] = pos_data['Node A']\n    df_edges['Node B'] = pos_data['Node B']\n    df_edges['edges'] = list(zip(pos_data['Node A'], pos_data['Node B']))\n    df_edges['Colors'] = ['black'] * len(pos_data['Edge name'])\n    df_edges['Width'] = [1] * len(pos_data['Edge name'])\n    df_edges.drop_duplicates()\n\n    df_edges.loc[df_edges['edges'].isin(route_1), 'Colors'] = 'red'\n    df_edges.loc[df_edges['edges'].isin(route_1), 'Width'] = 5\n\n    df_edges.loc[df_edges['edges'].isin(route_2), 'Colors'] = 'blue'\n    df_edges.loc[df_edges['edges'].isin(route_2), 'Width'] = 5\n\n    graph.add_edges_from(df_edges['edges'])\n\n    # Plot the graph\n    plt.figure(figsize=(20, 16))\n    pos = nx.get_node_attributes(graph, 'pos')\n    nx.draw_networkx_nodes(graph, pos=pos, node_size=30, node_color='black')\n\n    nx.draw_networkx_edges(graph, pos=pos, edgelist=df_edges['edges'].values, edge_color=df_edges['Colors'],\n                           width=df_edges['Width'])\n\n    # nx.draw_networkx_edges(graph, pos, edge_color='red', width=3)\n    plt.text(0.05, 0.95, text, transform=plt.gca().transAxes, fontsize=14,verticalalignment='top')\n\n    plt.show()\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Graph_Algorithm.py b/Graph_Algorithm.py
+--- a/Graph_Algorithm.py	(revision fdc74380791a8f46a1902161773c8c254e37e64d)
++++ b/Graph_Algorithm.py	(date 1720985511346)
+@@ -111,7 +111,7 @@
+ 
+ def visual(route, cluster):
+   #Prepare necessary dataframes
+-  pos_data = pd.read_csv("graph_imp_weighted_1.csv")
++  pos_data = pd.read_csv("graph_imp_weighted.csv")
+   pos_data = pos_data.drop_duplicates()
+   df_vis = pd.DataFrame()
+   df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])
+@@ -151,7 +151,7 @@
+   plt.show()
+ 
+ def visual_3(route_1, route_2, route_3, text):
+-    pos_data = pd.read_csv("graph_imp_weighted_1.csv")
++    pos_data = pd.read_csv("graph_imp_weighted.csv")
+     pos_data = pos_data.drop_duplicates()
+     df_vis = pd.DataFrame()
+     df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])
+@@ -197,7 +197,7 @@
+     plt.show()
+ 
+ def visual_2(route_1, route_2, text):
+-    pos_data = pd.read_csv("graph_imp_weighted_1.csv")
++    pos_data = pd.read_csv("graph_imp_weighted.csv")
+     pos_data = pos_data.drop_duplicates()
+     df_vis = pd.DataFrame()
+     df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pandas as pd\nimport warnings\nfrom clusterer_pipeline import ClusteringAlgo, run\nfrom data_transformer import DataTransformer\nfrom clusterer import Clusterer\nfrom weights import ClusterWeights\nfrom Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual\nfrom knotenpaare_neu import knotenpaare\nfrom similarity_vs_optimality import visualize_sim_difference, similarity_optimality\n\n\n# Example usage\nif __name__ == \"__main__\":\n   \n\n    data = pd.read_csv('test_split.csv')\n    example_row1 = data.sample(n=1)\n    example_row2 = data.sample(n=1)\n    print(example_row1)\n    print(example_row2)\n    # Initialize the clusterer and perform predictions\n    \n    '''\n    # Example for processing a DataFrame\n    ### change data to data-all.csv to process \n    transformed_data = run(data)\n    print(\"Transformed Data:\")\n    print(transformed_data.columns, transformed_data.head())\n    print(transformed_data.second_level_cluster.unique())\n    transformed_data.to_csv('clustered_data_all.csv', index=False, header=True)\n    '''\n    # Suppress SettingWithCopyWarning\n    pd.options.mode.chained_assignment = None  # default='warn'\n    # Suppress PerformanceWarning\n    warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)\n    # Suppress all warnings (use with caution)\n    warnings.filterwarnings('ignore')\n\n\n\n   ### Example for processing a single row\n    example_row = data.sample(n=1)\n    transformed_row = run(example_row1)\n    print(\"Transformed Row:\")\n    print(transformed_row)\n    weekday = transformed_row['weekday'].iloc[0]\n    time_str = transformed_row['Unnamed: 1047'].iloc[0]\n    time_formatted = f\"{time_str.split('_')[0]}:{time_str.split('_')[1]}\"\n    \n    weekday_dict = {\n        0: \"Monday\",\n        1: \"Tuesday\",\n        2: \"Wednesday\",\n        3: \"Thursday\",\n        4: \"Friday\",\n        5: \"Saturday\",\n        6: \"Sunday\"\n    }\n    formatted_weekday = weekday_dict[weekday]\n\n\n\n    ### Extract Information\n    weights = ClusterWeights('clustered_data_all.csv','distance_neu.csv' )\n    cluster = weights.generate_cluster_identifier(transformed_row.iloc[0])\n    graph_times = weights. get_lookup_table(cluster)\n\n    #Calculate similarity factor\n    fac = knotenpaare(1)\n\n\n    ### Example for calculating a shortest path for a cluster\n    t = prep(graph_times, fac)\n    mat = adjacency(t)\n    time, route = dijkstra_component(mat)\n    print(f\"Identified {formatted_weekday} at {time_formatted} as cluster: {cluster}\")\n    print(\"required time for the shortest path: \" + str(time*60) + \" minutes\")\n    #visual(route,cluster)\n    similarity_optimality(graph_times)\n    visualize_sim_difference(graph_times)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision fdc74380791a8f46a1902161773c8c254e37e64d)
++++ b/main.py	(date 1720986952134)
+@@ -6,7 +6,7 @@
+ from weights import ClusterWeights
+ from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual
+ from knotenpaare_neu import knotenpaare
+-from similarity_vs_optimality import visualize_sim_difference, similarity_optimality
++from similarity_vs_optimality import visualize_sim_difference, similarity_optimality, optimal_time
+ 
+ 
+ # Example usage
+@@ -46,6 +46,7 @@
+     weekday = transformed_row['weekday'].iloc[0]
+     time_str = transformed_row['Unnamed: 1047'].iloc[0]
+     time_formatted = f"{time_str.split('_')[0]}:{time_str.split('_')[1]}"
++    month = transformed_row['Unnamed: 1046'].iloc[0]
+     
+     weekday_dict = {
+         0: "Monday",
+@@ -75,6 +76,8 @@
+     time, route = dijkstra_component(mat)
+     print(f"Identified {formatted_weekday} at {time_formatted} as cluster: {cluster}")
+     print("required time for the shortest path: " + str(time*60) + " minutes")
+-    #visual(route,cluster)
++    visual(route,cluster)
+     similarity_optimality(graph_times)
+     visualize_sim_difference(graph_times)
++    print(optimal_time(graph_times, month, time_str))
++
+Index: knotenpaare_neu.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pandas as pd\nimport numpy as np\nimport csv\nfrom collections import defaultdict\n\n# Pfad zur Datei\n\nroute_all = pd.read_csv(\"route-all.csv\", names = range(100))\n\ndef knotenpaare(t):\n  # Path to the file\n  file_path = 'route-all.csv'\n\n  # Dictionary to store the edges and their counters\n  edge_count = defaultdict(int)\n  last_row = None\n\n  # Read the file and extract node pairs\n  with open(file_path, newline='') as csvfile:\n      reader = csv.reader(csvfile)\n      for row in reader:\n          # Extract only the relevant nodes (excluding the last two entries)\n          nodes = row[:-2]\n          last_row = row\n          # Iterate through the node pairs\n          for i in range(len(nodes) - 1):\n              edge = (nodes[i], nodes[i + 1])\n              edge_count[edge] += 1\n\n  print(f\"Number of unique edges: {len(edge_count)}\")\n  print(f\"Lat row: {last_row}\")\n  # Normalize the edges\n  normalized = {edge: 1 - ((count / 3212)*t) for edge, count in edge_count.items()}\n\n  #t[0,1]\n  # Output the edges and their counters in a list for better representation\n  edges_normalized = list(normalized.items())\n  edges_normalized  # display the entries for verification\n  edges = []\n  knoten1 = []\n  knoten2 = []\n  zähler= []\n  zähler_normalisiert = []\n\n  for edge, count in edge_count.items():\n      knoten1.append(edge[0])\n      knoten2.append(edge[1])\n      zähler.append(count)\n      zähler_normalisiert.append(normalized[edge])\n\n  # Create DataFrames\n  normalized_df = pd.DataFrame({\n      'Knoten1': knoten1,\n      'Knoten2': knoten2,\n      'Zähler': zähler,\n      'Zähler_normalisiert': zähler_normalisiert\n  })\n  return normalized_df\n  # Save DataFrames as CSV\n  #output_file_path = '/content/drive/MyDrive/ProO/data/Knotenpaare_normalisiert.csv'\n  '''\n  output_file_path = 'Knotenpaare_normalisiert.csv'\n  normalized_df.to_csv(output_file_path, index=False)\n\n  print(f'Die normalisierten Knotenpaare wurden erfolgreich in {output_file_path} gespeichert.')\n'''\n#hier werte zwischen 0 und 1 eingeben:\nknotenpaare(0.2)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/knotenpaare_neu.py b/knotenpaare_neu.py
+--- a/knotenpaare_neu.py	(revision fdc74380791a8f46a1902161773c8c254e37e64d)
++++ b/knotenpaare_neu.py	(date 1720986952130)
+@@ -27,8 +27,8 @@
+               edge = (nodes[i], nodes[i + 1])
+               edge_count[edge] += 1
+ 
+-  print(f"Number of unique edges: {len(edge_count)}")
+-  print(f"Lat row: {last_row}")
++  #print(f"Number of unique edges: {len(edge_count)}")
++  #print(f"Lat row: {last_row}")
+   # Normalize the edges
+   normalized = {edge: 1 - ((count / 3212)*t) for edge, count in edge_count.items()}
+ 

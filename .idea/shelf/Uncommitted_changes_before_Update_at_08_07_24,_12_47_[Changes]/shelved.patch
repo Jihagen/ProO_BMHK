@@ -1,0 +1,33 @@
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pandas as pd\nimport warnings\nfrom clusterer_pipeline import ClusteringAlgo, run\nfrom data_transformer import DataTransformer\nfrom clusterer import Clusterer\nfrom weights import ClusterWeights\nfrom Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual\nfrom knotenpaare_neu import knotenpaare\n\n\n# Example usage\nif __name__ == \"__main__\":\n   \n\n    data = pd.read_csv('test_split.csv')\n    example_row1 = data.sample(n=1)\n    example_row2 = data.sample(n=1)\n    print(example_row1)\n    print(example_row2)\n    # Initialize the clusterer and perform predictions\n    \n    '''\n    # Example for processing a DataFrame\n    ### change data to data-all.csv to process \n    transformed_data = run(data)\n    print(\"Transformed Data:\")\n    print(transformed_data.columns, transformed_data.head())\n    print(transformed_data.second_level_cluster.unique())\n    transformed_data.to_csv('clustered_data_all.csv', index=False, header=True)\n    '''\n    # Suppress SettingWithCopyWarning\n    pd.options.mode.chained_assignment = None  # default='warn'\n    # Suppress PerformanceWarning\n    warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)\n    # Suppress all warnings (use with caution)\n    warnings.filterwarnings('ignore')\n\n\n\n   ### Example for processing a single row\n    example_row = data.sample(n=1)\n    transformed_row = run(example_row1)\n    print(\"Transformed Row:\")\n    print(transformed_row)\n    weekday = transformed_row['weekday'].iloc[0]\n    time_str = transformed_row['Unnamed: 1047'].iloc[0]\n    time_formatted = f\"{time_str.split('_')[0]}:{time_str.split('_')[1]}\"\n    \n    weekday_dict = {\n        0: \"Monday\",\n        1: \"Tuesday\",\n        2: \"Wednesday\",\n        3: \"Thursday\",\n        4: \"Friday\",\n        5: \"Saturday\",\n        6: \"Sunday\"\n    }\n    formatted_weekday = weekday_dict[weekday]\n\n\n\n    ### Extract Information\n    weights = ClusterWeights('clustered_data_all.csv','distance_neu.csv' )\n    cluster = weights.generate_cluster_identifier(transformed_row.iloc[0])\n    graph_times = weights. get_lookup_table(cluster)\n\n    #Calculate similarity factor\n    fac = knotenpaare(1)\n\n\n    ### Example for calculating a shortest path for a cluster\n    t = prep(graph_times, fac)\n    mat = adjacency(t)\n    time, route = dijkstra_component(mat)\n    print(f\"Identified {formatted_weekday} at {time_formatted} as cluster: {cluster}\")\n    print(\"required time for the shortest path: \" + str(time*60) + \" minutes\")\n    visual(route,cluster)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision 312ded53c07dbeae1966f61c6957e5ab9dfbab08)
++++ b/main.py	(date 1720435616390)
+@@ -3,6 +3,7 @@
+ from clusterer_pipeline import ClusteringAlgo, run
+ from data_transformer import DataTransformer
+ from clusterer import Clusterer
++import matplotlib.pyplot as plt
+ from weights import ClusterWeights
+ from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual
+ from knotenpaare_neu import knotenpaare
+@@ -62,7 +63,7 @@
+     ### Extract Information
+     weights = ClusterWeights('clustered_data_all.csv','distance_neu.csv' )
+     cluster = weights.generate_cluster_identifier(transformed_row.iloc[0])
+-    graph_times = weights. get_lookup_table(cluster)
++    graph_times = weights.get_lookup_table(cluster)
+ 
+     #Calculate similarity factor
+     fac = knotenpaare(1)
+@@ -74,4 +75,4 @@
+     time, route = dijkstra_component(mat)
+     print(f"Identified {formatted_weekday} at {time_formatted} as cluster: {cluster}")
+     print("required time for the shortest path: " + str(time*60) + " minutes")
+-    visual(route,cluster)
++    visual(route, cluster)
