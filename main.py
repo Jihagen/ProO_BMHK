@@ -46,6 +46,7 @@ if __name__ == "__main__":
     weekday = transformed_row['weekday'].iloc[0]
     time_str = transformed_row['Unnamed: 1047'].iloc[0]
     time_formatted = f"{time_str.split('_')[0]}:{time_str.split('_')[1]}"
+    month = transformed_row['Unnamed: 1046'].iloc[0]
     
     weekday_dict = {
         0: "Monday",
@@ -78,3 +79,5 @@ if __name__ == "__main__":
     #visual(route,cluster)
     similarity_optimality(graph_times)
     visualize_sim_difference(graph_times)
+
+   print(optimal_time(graph_times, month, time_str))
