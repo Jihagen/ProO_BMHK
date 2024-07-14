@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from knotenpaare_neu import knotenpaare
 from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual_3
 
@@ -42,10 +43,20 @@ def visualize_sim_difference(graph_times):
 
 
 def optimal_time(graph_times, month, code):
+  code = code.strip()
+  month = month.strip()
+  print(month)
+  print(code)
   pos_data = pd.read_csv("graph_imp_weighted.csv")
   route_df = pd.read_csv("opt_routes_cleaned.csv")
-  l = route_df[route_df["Month"] == month and route_df["Code"]== code]
+  route_df.columns = ["Edge_Tuples", "Month", "Code"]
+  l = route_df[(route_df["Month"] == month) & (route_df["Code"] == code)]["Edge_Tuples"].tolist()
+
+
+
+
   r_df = pd.DataFrame({'Edge_Tuples': l})
+  print(r_df)
 
   pos_data["Node A"] = pos_data["Node A"].astype(int)
   pos_data["Node B"] = pos_data["Node B"].astype(int)
@@ -53,8 +64,9 @@ def optimal_time(graph_times, month, code):
 
   merged = pd.merge(r_df, pos_data, on="Edge_Tuples")
   merged = merged.drop(columns=['X of A', 'X of B', 'Y of A', 'Y of B', 'Avg Speed', 'Med Speed'])
-  merged_again = pd.merge(merged, graph_times, on="Edge names")
+  merged_again = pd.merge(merged, graph_times, on="Edge name")
   time = merged_again["times"].sum()
+  #print(merged_again)
   return time
 
 

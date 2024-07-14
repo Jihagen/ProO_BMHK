@@ -111,7 +111,7 @@ def dijkstra_component(adj_matrix):
 
 def visual(route, cluster):
   #Prepare necessary dataframes
-  pos_data = pd.read_csv("graph_imp_weighted_1.csv")
+  pos_data = pd.read_csv("graph_imp_weighted.csv")
   pos_data = pos_data.drop_duplicates()
   df_vis = pd.DataFrame()
   df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])
@@ -151,7 +151,7 @@ def visual(route, cluster):
   plt.show()
 
 def visual_3(route_1, route_2, route_3, text):
-    pos_data = pd.read_csv("graph_imp_weighted_1.csv")
+    pos_data = pd.read_csv("graph_imp_weighted.csv")
     pos_data = pos_data.drop_duplicates()
     df_vis = pd.DataFrame()
     df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])
@@ -197,7 +197,7 @@ def visual_3(route_1, route_2, route_3, text):
     plt.show()
 
 def visual_2(route_1, route_2, text):
-    pos_data = pd.read_csv("graph_imp_weighted_1.csv")
+    pos_data = pd.read_csv("graph_imp_weighted.csv")
     pos_data = pos_data.drop_duplicates()
     df_vis = pd.DataFrame()
     df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])

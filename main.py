@@ -6,7 +6,7 @@ from clusterer import Clusterer
 from weights import ClusterWeights
 from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual
 from knotenpaare_neu import knotenpaare
-from similarity_vs_optimality import visualize_sim_difference, similarity_optimality
+from similarity_vs_optimality import visualize_sim_difference, similarity_optimality, optimal_time
 
 
 # Example usage
@@ -80,4 +80,4 @@ if __name__ == "__main__":
     similarity_optimality(graph_times)
     visualize_sim_difference(graph_times)
 
-   print(optimal_time(graph_times, month, time_str))
+    print(optimal_time(graph_times, month, time_str))
