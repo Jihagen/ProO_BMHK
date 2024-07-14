@@ -41,7 +41,21 @@ def visualize_sim_difference(graph_times):
   visual_3(route_1, route_0, route_05, ("Rot: Similarity auf 1 Zeit: " + str(time_1) + " Blau: Similarity auf 0, Zeit: "+ str(time_0) + " Grün: Similarity auf 0.5" + str(time_05)))
 
 
-#def performance_analysis(graph_times, timestamp):
+def optimal_time(graph_times, month, code):
+  pos_data = pd.read_csv("graph_imp_weighted.csv")
+  route_df = pd.read_csv("opt_routes_cleaned.csv")
+  l = route_df[route_df["Month"] == month and route_df["Code"]== code]
+  r_df = pd.DataFrame({'Edge_Tuples': l})
+
+  pos_data["Node A"] = pos_data["Node A"].astype(int)
+  pos_data["Node B"] = pos_data["Node B"].astype(int)
+  pos_data["Edge_Tuples"] = list(zip(pos_data['Node A'], pos_data['Node B']))
+
+  merged = pd.merge(r_df, pos_data, on="Edge_Tuples")
+  merged = merged.drop(columns=['X of A', 'X of B', 'Y of A', 'Y of B', 'Avg Speed', 'Med Speed'])
+  merged_again = pd.merge(merged, graph_times, on="Edge names")
+  time = merged_again["times"].sum()
+  return time
 
 
 
