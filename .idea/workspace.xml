@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9562b068-4ee0-4eb5-876b-ceca4175e4d8" name="Changes" comment="test commit">
-      <change beforePath="$PROJECT_DIR$/Graph_Algorithm.py" beforeDir="false" afterPath="$PROJECT_DIR$/Graph_Algorithm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/knotenpaare_neu.py" beforeDir="false" afterPath="$PROJECT_DIR$/knotenpaare_neu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/similarity_vs_optimality.py" beforeDir="false" afterPath="$PROJECT_DIR$/similarity_vs_optimality.py" afterDir="false" />
-    </list>
+    <list default="true" id="9562b068-4ee0-4eb5-876b-ceca4175e4d8" name="Changes" comment="test commit" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,7 +13,6 @@
   <component name="Git.Settings">
     <option name="PUSH_AUTO_UPDATE" value="true" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -64,7 +58,7 @@
       <workItem from="1720434243765" duration="4152000" />
       <workItem from="1720471967672" duration="13699000" />
       <workItem from="1720974067430" duration="2879000" />
-      <workItem from="1720985125897" duration="4094000" />
+      <workItem from="1720985125897" duration="4436000" />
     </task>
     <task id="LOCAL-00001" summary="Hilfe">
       <created>1720429334471</created>
@@ -87,7 +81,21 @@
       <option name="project" value="LOCAL" />
       <updated>1720855543102</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="test commit">
+      <created>1720989250613</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1720989250613</updated>
+    </task>
+    <task id="LOCAL-00005" summary="test commit">
+      <created>1720989282488</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1720989282488</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
