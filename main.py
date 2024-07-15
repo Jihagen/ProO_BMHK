@@ -46,6 +46,7 @@ if __name__ == "__main__":
     weekday = transformed_row['weekday'].iloc[0]
     time_str = transformed_row['Unnamed: 1047'].iloc[0]
     time_formatted = f"{time_str.split('_')[0]}:{time_str.split('_')[1]}"
+    month = transformed_row['Unnamed: 1046'].iloc[0]
     
     weekday_dict = {
         0: "Monday",
@@ -78,6 +79,7 @@ if __name__ == "__main__":
     time, route = dijkstra_component(mat)
     print(f"Identified {formatted_weekday} at {time_formatted} as cluster: {cluster}")
     print("required time for the shortest path: " + str(time*60) + " minutes")
+    time = time * 60
     visual(route,cluster)
 
     similarity_optimality(graph_times)
@@ -87,6 +89,6 @@ if __name__ == "__main__":
     opt_route, together_edges, opt_time = optimal_time(graph_times, month, time_str, route)
     time_difference = opt_time - time
 
-    print("Time difference:" + str(time_difference))
+    print("Time difference:" + str(time_difference) + " minutes")
     print("Gemeinsame Kanten geteilt durch gefahrene Kanten: " + str(together_edges))
-    visual_2(route, opt_route, "path taken: red, opt_path: blue")
+    visual_2(route, opt_route, "path taken: green, opt_path: orange")
