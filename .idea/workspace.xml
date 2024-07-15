@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9562b068-4ee0-4eb5-876b-ceca4175e4d8" name="Changes" comment="test commit" />
+    <list default="true" id="9562b068-4ee0-4eb5-876b-ceca4175e4d8" name="Changes" comment="test commit">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_08_07_24,_11_00_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_08_07_24,_12_13_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_08_07_24__11_00__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_08_07_24__12_13__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/evaluate_algorithm.py" beforeDir="false" afterPath="$PROJECT_DIR$/evaluate_algorithm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/similarity_vs_optimality.py" beforeDir="false" afterPath="$PROJECT_DIR$/similarity_vs_optimality.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -59,6 +67,7 @@
       <workItem from="1720471967672" duration="13699000" />
       <workItem from="1720974067430" duration="2879000" />
       <workItem from="1720985125897" duration="10276000" />
+      <workItem from="1721074693602" duration="1602000" />
     </task>
     <task id="LOCAL-00001" summary="Hilfe">
       <created>1720429334471</created>
@@ -132,7 +141,7 @@
     <option name="LAST_COMMIT_MESSAGE" value="test commit" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ProO_BMHK$main.coverage" NAME="main Coverage Results" MODIFIED="1721032937748" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ProO_BMHK$main.coverage" NAME="main Coverage Results" MODIFIED="1721075697387" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProO_BMHK$Graph_Algorithm.coverage" NAME="Graph_Algorithm Coverage Results" MODIFIED="1720864855935" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProO_BMHK$similarity_vs_optimality.coverage" NAME="similarity_vs_optimality Coverage Results" MODIFIED="1721020721624" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProO_BMHK$knotenpaare_neu.coverage" NAME="knotenpaare_neu Coverage Results" MODIFIED="1720987311810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
