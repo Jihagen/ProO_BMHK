@@ -4,7 +4,7 @@ from clusterer_pipeline import ClusteringAlgo, run
 from data_transformer import DataTransformer
 from clusterer import Clusterer
 from weights import ClusterWeights
-from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual
+from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual, visual_2
 from knotenpaare_neu import knotenpaare
 from similarity_vs_optimality import visualize_sim_difference, similarity_optimality, optimal_time
 
@@ -67,17 +67,23 @@ if __name__ == "__main__":
     graph_times = weights. get_lookup_table(cluster)
 
     #Calculate similarity factor
-    fac = knotenpaare(1)
+    fac = knotenpaare(0)
 
 
     ### Example for calculating a shortest path for a cluster
     t = prep(graph_times, fac)
     mat = adjacency(t)
     time, route = dijkstra_component(mat)
+    time = time * 60
     print(f"Identified {formatted_weekday} at {time_formatted} as cluster: {cluster}")
-    print("required time for the shortest path: " + str(time*60) + " minutes")
+    print("required time for the shortest path: " + str(time) + " minutes")
     #visual(route,cluster)
     similarity_optimality(graph_times)
     visualize_sim_difference(graph_times)
 
-    print(optimal_time(graph_times, month, time_str))
+    opt_route, together_edges, opt_time = optimal_time(graph_times, month, time_str, route)
+    time_difference = opt_time - time
+
+    print("Time difference:" + str(time_difference))
+    print("Gemeinsame Kanten geteilt durch gefahrene Kanten: " + str(together_edges))
+    visual_2(route, opt_route, "path taken: red, opt_path: blue")

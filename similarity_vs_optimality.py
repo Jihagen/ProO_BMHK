@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from knotenpaare_neu import knotenpaare
 from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual_3
-
+import csv
 
 def similarity_optimality(graph_times):
   normalization = np.linspace(0, 1, 20)
@@ -42,21 +42,42 @@ def visualize_sim_difference(graph_times):
   visual_3(route_1, route_0, route_05, ("Rot: Similarity auf 1 Zeit: " + str(time_1) + " Blau: Similarity auf 0, Zeit: "+ str(time_0) + " Grün: Similarity auf 0.5" + str(time_05)))
 
 
-def optimal_time(graph_times, month, code):
+def optimal_time(graph_times, month, code, path):
   code = code.strip()
   month = month.strip()
-  print(month)
-  print(code)
+
   pos_data = pd.read_csv("graph_imp_weighted.csv")
-  route_df = pd.read_csv("opt_routes_cleaned.csv")
-  route_df.columns = ["Edge_Tuples", "Month", "Code"]
-  l = route_df[(route_df["Month"] == month) & (route_df["Code"] == code)]["Edge_Tuples"].tolist()
 
+  file_path = "route-all-missing-last-day.csv"
 
+  result = []
+  code_l = []
+  month_l = []
 
+  with open(file_path, 'r') as file:
+    reader = csv.reader(file)
+    for row in reader:
+      temp_list = []
+      for entry in row:
+        temp_list.append(entry)
 
-  r_df = pd.DataFrame({'Edge_Tuples': l})
-  print(r_df)
+      a = [int(temp_list[i]) - 1 for i in range(len(temp_list) - 2)]
+      l = [(a[i] + 1, a[i + 1] + 1) for i in range(len(a) - 1)]
+      result.append(l)
+      code_l.append(temp_list[-1].strip())
+      month_l.append(temp_list[-2].strip())
+
+  print(code)
+  print(month)
+
+  route_df = pd.DataFrame({'Edge_Tuples': result, 'Month': month_l, 'Code': code_l})
+  print(route_df)
+
+  row = route_df[(route_df["Month"] == month) & (route_df["Code"] == code)]["Edge_Tuples"].iloc[0]
+  row = list(row)
+  print(row)
+
+  r_df = pd.DataFrame({'Edge_Tuples': row})
 
   pos_data["Node A"] = pos_data["Node A"].astype(int)
   pos_data["Node B"] = pos_data["Node B"].astype(int)
@@ -65,9 +86,16 @@ def optimal_time(graph_times, month, code):
   merged = pd.merge(r_df, pos_data, on="Edge_Tuples")
   merged = merged.drop(columns=['X of A', 'X of B', 'Y of A', 'Y of B', 'Avg Speed', 'Med Speed'])
   merged_again = pd.merge(merged, graph_times, on="Edge name")
-  time = merged_again["times"].sum()
+  time = merged_again["times"].sum() * 60
   #print(merged_again)
-  return time
+  #print(time)
+  counter = 0
+  for i in row:
+    if i in path:
+      counter+= 1
+  relation = counter / len(row)
+
+  return row, relation, time
 
 
 
