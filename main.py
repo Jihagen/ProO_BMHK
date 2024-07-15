@@ -4,9 +4,9 @@ from clusterer_pipeline import ClusteringAlgo, run
 from data_transformer import DataTransformer
 from clusterer import Clusterer
 from weights import ClusterWeights
-from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual
+from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual, visual_2
 from knotenpaare_neu import knotenpaare
-from similarity_vs_optimality import similarity_optimality
+from similarity_vs_optimality import similarity_optimality, visualize_sim_difference, optimal_time
 
 
 # Example usage
@@ -81,3 +81,12 @@ if __name__ == "__main__":
     visual(route,cluster)
 
     similarity_optimality(graph_times)
+    visual(route,cluster)
+    visualize_sim_difference(graph_times)
+
+    opt_route, together_edges, opt_time = optimal_time(graph_times, month, time_str, route)
+    time_difference = opt_time - time
+
+    print("Time difference:" + str(time_difference))
+    print("Gemeinsame Kanten geteilt durch gefahrene Kanten: " + str(together_edges))
+    visual_2(route, opt_route, "path taken: red, opt_path: blue")
