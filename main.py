@@ -7,7 +7,7 @@ from weights import ClusterWeights
 from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual, visual_2
 from knotenpaare_neu import knotenpaare
 from similarity_vs_optimality import visualize_sim_difference, similarity_optimality, optimal_time
-
+from evaluate_algorithm import evaluate_algorithm
 
 # Example usage
 if __name__ == "__main__":
@@ -86,4 +86,7 @@ if __name__ == "__main__":
 
     print("Time difference:" + str(time_difference))
     print("Gemeinsame Kanten geteilt durch gefahrene Kanten: " + str(together_edges))
-    visual_2(route, opt_route, "path taken: red, opt_path: blue")
+    visual_2(route, opt_route, "path taken: green, opt_path: orange")
+
+    sample_number, avg_together_edges = evaluate_algorithm(data)
+    print(f"Average together_edges for {sample_number} samples: {avg_together_edges}")

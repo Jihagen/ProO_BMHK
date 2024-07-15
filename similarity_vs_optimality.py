@@ -73,7 +73,10 @@ def optimal_time(graph_times, month, code, path):
   route_df = pd.DataFrame({'Edge_Tuples': result, 'Month': month_l, 'Code': code_l})
   print(route_df)
 
-  row = route_df[(route_df["Month"] == month) & (route_df["Code"] == code)]["Edge_Tuples"].iloc[0]
+  row_df = route_df[(route_df["Month"] == month) & (route_df["Code"] == code)]["Edge_Tuples"]
+  if row_df.empty:
+    return 0, 0, 0
+  row = row_df.iloc[0]
   row = list(row)
   print(row)
 

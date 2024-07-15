@@ -8,8 +8,9 @@ from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visua
 from knotenpaare_neu import knotenpaare
 from similarity_vs_optimality import visualize_sim_difference, similarity_optimality, optimal_time
 
-def evaluate_algorithm(data, num_samples=100):
+def evaluate_algorithm(data, num_samples=10):
     together_edges_list = []
+    counter = 0
     
     for _ in range(num_samples):
         # Select a random row
@@ -40,11 +41,14 @@ def evaluate_algorithm(data, num_samples=100):
         
         # Calculate optimal path
         opt_route, together_edges, opt_time = optimal_time(graph_times, month, time_str, route)
-        
+        if (opt_route, together_edges, opt_time) == (0, 0, 0):
+            continue
+
         # Collect together_edges
         together_edges_list.append(together_edges)
-    
+        counter += 1
+
     # Calculate average together_edges
-    avg_together_edges = sum(together_edges_list) / num_samples
+    avg_together_edges = sum(together_edges_list) / counter
     
-    return avg_together_edges
+    return counter, avg_together_edges
