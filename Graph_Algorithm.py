@@ -132,7 +132,7 @@ def visual(route, cluster):
   df_edges['Width'] = [1] * len(pos_data['Edge name'])
   df_edges.drop_duplicates()
 
-  df_edges.loc[df_edges['edges'].isin(route), 'Colors'] = 'red'
+  df_edges.loc[df_edges['edges'].isin(route), 'Colors'] = 'green'
   df_edges.loc[df_edges['edges'].isin(route), 'Width'] = 5
 
   graph.add_edges_from(df_edges['edges'])
@@ -218,10 +218,10 @@ def visual_2(route_1, route_2, text):
     df_edges['Width'] = [1] * len(pos_data['Edge name'])
     df_edges.drop_duplicates()
 
-    df_edges.loc[df_edges['edges'].isin(route_1), 'Colors'] = 'red'
+    df_edges.loc[df_edges['edges'].isin(route_1), 'Colors'] = 'green'
     df_edges.loc[df_edges['edges'].isin(route_1), 'Width'] = 5
 
-    df_edges.loc[df_edges['edges'].isin(route_2), 'Colors'] = 'blue'
+    df_edges.loc[df_edges['edges'].isin(route_2), 'Colors'] = 'orange'
     df_edges.loc[df_edges['edges'].isin(route_2), 'Width'] = 5
 
     graph.add_edges_from(df_edges['edges'])
