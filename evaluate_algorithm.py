@@ -8,7 +8,7 @@ from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visua
 from knotenpaare_neu import knotenpaare
 from similarity_vs_optimality import visualize_sim_difference, similarity_optimality, optimal_time
 
-def evaluate_algorithm(data, num_samples=10):
+def evaluate_algorithm(data, num_samples=500):
     together_edges_list = []
     counter = 0
     

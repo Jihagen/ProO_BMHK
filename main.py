@@ -15,6 +15,7 @@ if __name__ == "__main__":
 
     data = pd.read_csv('test_split.csv')
     example_row1 = data.sample(n=1)
+    #example_row1 = data.iloc[[94]]
     example_row2 = data.sample(n=1)
     print(example_row1)
     print(example_row2)
@@ -77,7 +78,7 @@ if __name__ == "__main__":
     time = time * 60
     print(f"Identified {formatted_weekday} at {time_formatted} as cluster: {cluster}")
     print("required time for the shortest path: " + str(time) + " minutes")
-    #visual(route,cluster)
+    visual(route,cluster)
     similarity_optimality(graph_times)
     visualize_sim_difference(graph_times)
 
@@ -88,5 +89,5 @@ if __name__ == "__main__":
     print("Gemeinsame Kanten geteilt durch gefahrene Kanten: " + str(together_edges))
     visual_2(route, opt_route, "path taken: green, opt_path: orange")
 
-    sample_number, avg_together_edges = evaluate_algorithm(data)
-    print(f"Average together_edges for {sample_number} samples: {avg_together_edges}")
+    #sample_number, avg_together_edges = evaluate_algorithm(data)
+    #print(f"Average together_edges for {sample_number} samples: {avg_together_edges}")
