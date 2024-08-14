@@ -98,4 +98,5 @@ def optimal_time(graph_times, month, code, path):
       counter+= 1
   relation = counter / len(row)
 
+
   return row, relation, time

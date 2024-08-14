@@ -7,6 +7,7 @@ from weights import ClusterWeights
 from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual, visual_2
 from knotenpaare_neu import knotenpaare
 from similarity_vs_optimality import visualize_sim_difference, similarity_optimality, optimal_time
+import matplotlib.pyplot as plt
 
 def evaluate_algorithm(data, num_samples=10):
     together_edges_list = []
@@ -47,6 +48,16 @@ def evaluate_algorithm(data, num_samples=10):
         # Collect together_edges
         together_edges_list.append(together_edges)
         counter += 1
+
+    #bin_edges = [0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9]
+    plt.hist(together_edges_list, bins=10, edgecolor='black')
+    print(together_edges_list)
+
+    # Titel und Achsenbeschriftungen hinzufügen
+    plt.title('Histogramm Evaluation')
+    plt.xlabel('Werte')
+    plt.ylabel('Häufigkeit')
+    plt.show()
 
     # Calculate average together_edges
     avg_together_edges = sum(together_edges_list) / counter

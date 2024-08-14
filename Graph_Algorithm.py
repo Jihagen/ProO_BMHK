@@ -74,6 +74,8 @@ def dijkstra(adj_matrix, start):
     times = [float('inf')] * num_nodes
     times[start] = 0
 
+    target = 161
+
     # Initialize priority queue
     pq = [(0, 0, start)]
     path_list = [[i] for i in range(num_nodes)]
@@ -82,6 +84,10 @@ def dijkstra(adj_matrix, start):
     while pq:
         # Pop the node with the minimum weight
         current_weight, current_time, current_node = heapq.heappop(pq)
+
+        if current_node == target:
+            return weight_sums, times, path_list
+
         # Check if the current node is already processed
         if current_weight > weight_sums[current_node]:
             continue
