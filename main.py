@@ -6,7 +6,7 @@ from clusterer import Clusterer
 from weights import ClusterWeights
 from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual, visual_2
 from knotenpaare_neu import knotenpaare
-from similarity_vs_optimality import similarity_optimality, visualize_sim_difference, optimal_time
+from similarity_vs_optimality import similarity_optimality, visualize_sim_difference, optimal_time, visualize_frequency
 from evaluate_algorithm import evaluate_algorithm
 
 # Example usage
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     
 
     #Calculate similarity factor
-    fac = knotenpaare(1)
+    fac = knotenpaare(0.5)
 
     ### Example for calculating a shortest path for a cluster
     t = prep(graph_times, fac)
@@ -81,6 +81,8 @@ if __name__ == "__main__":
     print("required time for the shortest path: " + str(time*60) + " minutes")
     time = time * 60
     visual(route,cluster)
+
+    visualize_frequency(fac)
 
     similarity_optimality(graph_times)
     visual(route,cluster)
@@ -93,6 +95,6 @@ if __name__ == "__main__":
     print("Gemeinsame Kanten geteilt durch gefahrene Kanten: " + str(together_edges))
     visual_2(route, opt_route, "path taken: green, opt_path: orange")
 
-    c, av = evaluate_algorithm(data, 200)
-    print(c)
-    print(av)
+    #c, av = evaluate_algorithm(data, 200)
+    #print(c)
+    #print(av)

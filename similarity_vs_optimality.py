@@ -4,6 +4,7 @@ import pandas as pd
 from knotenpaare_neu import knotenpaare
 from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual_3
 import csv
+import networkx as nx
 
 def similarity_optimality(graph_times):
   normalization = np.linspace(0, 1, 20)
@@ -100,3 +101,46 @@ def optimal_time(graph_times, month, code, path):
 
 
   return row, relation, time
+
+
+def visualize_frequency(factors):
+  pos_data = pd.read_csv("graph_imp_weighted.csv")
+  pos_data = pos_data.drop_duplicates()
+  df_vis = pd.DataFrame()
+  df_vis['Nodes'] = list(pos_data['Node A']) + list(pos_data['Node B'])
+  df_vis['X'] = list(pos_data['X of A']) + list(pos_data['X of B'])
+  df_vis['Y'] = list(pos_data['Y of A']) + list(pos_data['Y of B'])
+  df_nodes = df_vis.drop_duplicates()
+
+  print(factors)
+
+  graph = nx.Graph()
+  # Add nodes with their positions
+  for index, row in df_nodes.iterrows():
+    graph.add_node(row['Nodes'], pos=(row['X'] / 10, row['Y'] / 10))
+
+  df_edges = pd.DataFrame()
+  df_edges['Node A'] = pos_data['Node A']
+  df_edges['Node B'] = pos_data['Node B']
+  df_edges['Pairs'] = list(zip(pos_data['Node A'], pos_data['Node B']))
+  df_edges = pd.merge(df_edges, factors, on="Pairs")
+
+  df_edges['Width'] = [1] * len(df_edges['Pairs'])
+  df_edges.drop_duplicates()
+
+  df_edges["Width"] = df_edges["Counter"] / 100
+
+  graph.add_edges_from(df_edges['Pairs'])
+
+  # Plot the graph
+  plt.figure(figsize=(20, 16))
+  pos = nx.get_node_attributes(graph, 'pos')
+  nx.draw_networkx_nodes(graph, pos=pos, node_size=30, node_color='black')
+
+  nx.draw_networkx_edges(graph, pos=pos, edgelist=df_edges['Pairs'].values, edge_color="black",
+                         width=df_edges['Width'])
+
+  # nx.draw_networkx_edges(graph, pos, edge_color='red', width=3)
+  #plt.text(0.05, 0.95, text, transform=plt.gca().transAxes, fontsize=14, verticalalignment='top')
+
+  plt.show()
