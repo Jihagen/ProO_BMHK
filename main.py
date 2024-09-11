@@ -95,6 +95,7 @@ if __name__ == "__main__":
     print("Gemeinsame Kanten geteilt durch gefahrene Kanten: " + str(together_edges))
     visual_2(route, opt_route, "path taken: green, opt_path: orange")
 
-    #c, av = evaluate_algorithm(data, 200)
+    #c, av, av_t = evaluate_algorithm(data, 10000)
     #print(c)
     #print(av)
+    #print(av_t)
