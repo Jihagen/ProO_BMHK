@@ -13,3 +13,6 @@ How to use our Code:
    - evaluate_algorithm
    - main
    - pair_of_nodes
+   - similarity_vs_optimality
+   - weights
+2. 
