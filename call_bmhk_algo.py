@@ -7,38 +7,17 @@ from weights import ClusterWeights
 from Graph_Algorithm import prep, adjacency, dijkstra, dijkstra_component, visual, visual_2
 from knotenpaare_neu import knotenpaare
 from similarity_vs_optimality import similarity_optimality, visualize_sim_difference, optimal_time, visualize_frequency
-from evaluate_algorithm import evaluate_algorithm, final
+from evaluate_algorithm import evaluate_algorithm
 
-# Example usage
-if __name__ == "__main__":
-   
 
-    data = pd.read_csv('test_split.csv')
-    example_row1 = data.sample(n=1)
-    example_row2 = data.sample(n=1)
-    print(example_row1)
-    print(example_row2)
-    # Initialize the clusterer and perform predictions
-    
-    '''
-    # Example for processing a DataFrame
-    ### change data to data-all.csv to process 
-    transformed_data = run(data)
-    print("Transformed Data:")
-    print(transformed_data.columns, transformed_data.head())
-    print(transformed_data.second_level_cluster.unique())
-    transformed_data.to_csv('clustered_data_all.csv', index=False, header=True)
-    '''
-    # Suppress SettingWithCopyWarning
+def call_bmhk_algo(example_row1):
     pd.options.mode.chained_assignment = None  # default='warn'
     # Suppress PerformanceWarning
     warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
     # Suppress all warnings (use with caution)
     warnings.filterwarnings('ignore')
 
-
-
-   ### Example for processing a single row
+    ### Example for processing a single row
     example_row = data.sample(n=1)
     transformed_row = run(example_row1)
     print("Transformed Row:")
@@ -47,7 +26,7 @@ if __name__ == "__main__":
     time_str = transformed_row['Unnamed: 1047'].iloc[0]
     time_formatted = f"{time_str.split('_')[0]}:{time_str.split('_')[1]}"
     month = transformed_row['Unnamed: 1046'].iloc[0]
-    
+
     weekday_dict = {
         0: "Monday",
         1: "Tuesday",
@@ -59,18 +38,14 @@ if __name__ == "__main__":
     }
     formatted_weekday = weekday_dict[weekday]
 
-
-
     ### Extract Information
-    weights = ClusterWeights('clustered_data_all.csv','distance_neu.csv' )
+    weights = ClusterWeights('clustered_data_all.csv', 'distance_neu.csv')
     cluster = weights.generate_cluster_identifier(transformed_row.iloc[0])
-    #graph_times = weights.get_lookup_table(cluster)
+    # graph_times = weights.get_lookup_table(cluster)
 
     graph_times = weights.weights_for_dynamic_cluster(cluster, transformed_row.iloc[0])
 
-    
-
-    #Calculate similarity factor
+    # Calculate similarity factor
     fac = knotenpaare(0.5)
 
     ### Example for calculating a shortest path for a cluster
@@ -78,26 +53,11 @@ if __name__ == "__main__":
     mat = adjacency(t)
     time, route = dijkstra_component(mat)
     print(f"Identified {formatted_weekday} at {time_formatted} as cluster: {cluster}")
-    print("required time for the shortest path: " + str(time*60) + " minutes")
+    print("required time for the shortest path: " + str(time * 60) + " minutes")
     time = time * 60
-    #visual(route,cluster)
 
-    #visualize_frequency(fac)
+    ret_route = []
+    for (i, h) in route:
+        ret_route.append(i)
 
-    #similarity_optimality(graph_times)
-    #visual(route,cluster)
-    #visualize_sim_difference(graph_times)
-
-    opt_route, together_edges, opt_time = optimal_time(graph_times, month, time_str, route)
-    time_difference = opt_time - time
-
-    print("Time difference:" + str(time_difference) + " minutes")
-    print("Gemeinsame Kanten geteilt durch gefahrene Kanten: " + str(together_edges))
-    #visual_2(route, opt_route, "path taken: green, opt_path: orange")
-
-    #c, av, av_t = evaluate_algorithm(data, 10000)
-    #print(c)
-    #print(av)
-    #print(av_t)
-
-    final(data, 1000000)
+    return time, ret_route

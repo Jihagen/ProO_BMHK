@@ -40,7 +40,7 @@ def evaluate_algorithm(data, num_samples=10):
         graph_times = weights.get_lookup_table(cluster)
 
         # Calculate similarity factor
-        fac = knotenpaare(0.5)
+        fac = knotenpaare(0)
 
         # Calculate shortest path for a cluster
         t = prep(graph_times, fac)
@@ -58,7 +58,7 @@ def evaluate_algorithm(data, num_samples=10):
                 #edge_count.loc[edge_count['Pairs'] == i, 'Counter'] += 1
             #else:
                 #edge_count = pd.concat([edge_count, pd.DataFrame({'Pairs': [i], 'Counter': [1]})], ignore_index=True)
-        if month == "May"
+
 
 
         # Collect together_edges
@@ -85,3 +85,58 @@ def evaluate_algorithm(data, num_samples=10):
 
 
     return counter, avg_together_edges, avg_time
+
+
+def final(data, num_samples):
+    #together_edges_list = []
+    routes_list = []
+    month_list = []
+    code_list = []
+    #times_list = []
+    #counter = 0
+    num_samples = min(num_samples, len(data))
+    # edge_count = pd.DataFrame()
+    # edge_count["Pairs"] = [(0, 0)]
+    # edge_count["Counter"] = [0]
+
+
+    for i in range(num_samples):
+        # Select a random row
+        example_row = data.iloc[[i]]
+
+        # Transform the row
+        transformed_row = run(example_row)
+
+        # Extract relevant information
+        weekday = transformed_row['weekday'].iloc[0]
+        time_str = transformed_row['Unnamed: 1047'].iloc[0]
+        time_formatted = f"{time_str.split('_')[0]}:{time_str.split('_')[1]}"
+        month = transformed_row['Unnamed: 1046'].iloc[0]
+
+        # Generate cluster and lookup table
+        weights = ClusterWeights('clustered_data_all.csv', 'distance_neu.csv')
+        cluster = weights.generate_cluster_identifier(transformed_row.iloc[0])
+        graph_times = weights.get_lookup_table(cluster)
+
+        # Calculate similarity factor
+        fac = knotenpaare(0.5)
+
+        # Calculate shortest path for a cluster
+        t = prep(graph_times, fac)
+        mat = adjacency(t)
+        time, route = dijkstra_component(mat)
+        time = time * 60
+
+        route_new = []
+        for (i, m) in route:
+            route_new.append(i-1)
+
+        routes_list.append(route_new)
+        month_list.append(month)
+        code_list.append(time_str)
+
+        result_routes = pd.DataFrame({"Routes": routes_list, "Month": month_list, "Code": code_list})
+        result_routes.to_csv('result_routes.csv', index=False)
+
+
+    return result_routes

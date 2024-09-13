@@ -140,7 +140,5 @@ def visualize_frequency(factors):
   nx.draw_networkx_edges(graph, pos=pos, edgelist=df_edges['Pairs'].values, edge_color="black",
                          width=df_edges['Width'])
 
-  # nx.draw_networkx_edges(graph, pos, edge_color='red', width=3)
-  #plt.text(0.05, 0.95, text, transform=plt.gca().transAxes, fontsize=14, verticalalignment='top')
 
   plt.show()
