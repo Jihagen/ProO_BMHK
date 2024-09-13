@@ -9,6 +9,8 @@ import networkx as nx
 def similarity_optimality(graph_times):
   normalization = np.linspace(0, 1, 20)
   values = []
+
+  #Calculate path times
   for t in normalization:
     k = knotenpaare(t)
     p = prep(graph_times,k )
@@ -16,6 +18,7 @@ def similarity_optimality(graph_times):
     t, _= dijkstra_component(a)
     values.append(t)
 
+  #Plot results
   plt.plot(normalization, values, marker='o', linestyle='-')
   plt.xlabel('Factor')
   plt.ylabel('Time taken')
@@ -25,6 +28,7 @@ def similarity_optimality(graph_times):
 
 
 def visualize_sim_difference(graph_times):
+  #Calculate all 3 routes
   k_1 = knotenpaare(1)
   p_1 = prep(graph_times, k_1)
   a_1 = adjacency(p_1)
@@ -40,21 +44,25 @@ def visualize_sim_difference(graph_times):
   a_05 = adjacency(p_05)
   time_05, route_05 = dijkstra_component(a_05)
 
+  #Plot the routes
   visual_3(route_1, route_0, route_05, ("Rot: Similarity auf 1 Zeit: " + str(time_1) + " Blau: Similarity auf 0, Zeit: "+ str(time_0) + " Grün: Similarity auf 0.5" + str(time_05)))
 
 
 def optimal_time(graph_times, month, code, path):
+  # Remove whitespace from 'code' and 'month'
   code = code.strip()
   month = month.strip()
 
+  # Load the graph data from CSV
   pos_data = pd.read_csv("graph_imp_weighted.csv")
-
   file_path = "route-all-missing-last-day.csv"
 
+  # Initialize lists to store edges, codes, and months
   result = []
   code_l = []
   month_l = []
 
+  # Read the route file and extract edge tuples, codes, and months
   with open(file_path, 'r') as file:
     reader = csv.reader(file)
     for row in reader:
@@ -68,35 +76,43 @@ def optimal_time(graph_times, month, code, path):
       code_l.append(temp_list[-1].strip())
       month_l.append(temp_list[-2].strip())
 
-  print(code)
-  print(month)
+  # Create a DataFrame with edges, months, and codes
+  route_df = pd.DataFrame({'Edge_Tuples': result, 'Month': month_l, 'Code': code_l}
 
-  route_df = pd.DataFrame({'Edge_Tuples': result, 'Month': month_l, 'Code': code_l})
-  print(route_df)
-
+  # Filter the DataFrame for the matching month and code
   row_df = route_df[(route_df["Month"] == month) & (route_df["Code"] == code)]["Edge_Tuples"]
   if row_df.empty:
     return 0, 0, 0
+
+  # Get the first matching row and convert it to a list
   row = row_df.iloc[0]
   row = list(row)
-  print(row)
 
+  # Create a DataFrame for the matching edge tuples
   r_df = pd.DataFrame({'Edge_Tuples': row})
 
+  # Convert columns to integers and create an 'Edge_Tuples' column in pos_data
   pos_data["Node A"] = pos_data["Node A"].astype(int)
   pos_data["Node B"] = pos_data["Node B"].astype(int)
   pos_data["Edge_Tuples"] = list(zip(pos_data['Node A'], pos_data['Node B']))
 
+  # Merge the DataFrames to match edges with their data
   merged = pd.merge(r_df, pos_data, on="Edge_Tuples")
   merged = merged.drop(columns=['X of A', 'X of B', 'Y of A', 'Y of B', 'Avg Speed', 'Med Speed'])
+
+  # Merge with graph_times to get the times for each edge
   merged_again = pd.merge(merged, graph_times, on="Edge name")
+
+  # Calculate total time in seconds
   time = merged_again["times"].sum() * 60
-  #print(merged_again)
-  #print(time)
+
+  # Count how many edges in the row are in the given path
   counter = 0
   for i in row:
     if i in path:
       counter+= 1
+
+  # Calculate the ratio of matching edges
   relation = counter / len(row)
 
 
@@ -104,6 +120,7 @@ def optimal_time(graph_times, month, code, path):
 
 
 def visualize_frequency(factors):
+  #Import necessary data
   pos_data = pd.read_csv("graph_imp_weighted.csv")
   pos_data = pos_data.drop_duplicates()
   df_vis = pd.DataFrame()
@@ -111,8 +128,6 @@ def visualize_frequency(factors):
   df_vis['X'] = list(pos_data['X of A']) + list(pos_data['X of B'])
   df_vis['Y'] = list(pos_data['Y of A']) + list(pos_data['Y of B'])
   df_nodes = df_vis.drop_duplicates()
-
-  print(factors)
 
   graph = nx.Graph()
   # Add nodes with their positions
@@ -128,6 +143,7 @@ def visualize_frequency(factors):
   df_edges['Width'] = [1] * len(df_edges['Pairs'])
   df_edges.drop_duplicates()
 
+  #Change Width based on frequency of edge
   df_edges["Width"] = df_edges["Counter"] / 100
 
   graph.add_edges_from(df_edges['Pairs'])
@@ -139,6 +155,5 @@ def visualize_frequency(factors):
 
   nx.draw_networkx_edges(graph, pos=pos, edgelist=df_edges['Pairs'].values, edge_color="black",
                          width=df_edges['Width'])
-
 
   plt.show()

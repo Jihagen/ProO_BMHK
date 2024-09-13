@@ -152,7 +152,7 @@ def visual(route, cluster):
   nx.draw_networkx_edges(graph, pos=pos, edgelist=df_edges['edges'].values, edge_color=df_edges['Colors'],
                          width=df_edges['Width'])
 
-  #nx.draw_networkx_edges(graph, pos, edge_color='red', width=3)
+
   plt.title('Shortest path for cluster: ' + str(cluster))
   plt.show()
 
@@ -178,6 +178,7 @@ def visual_3(route_1, route_2, route_3, text):
     df_edges['Width'] = [1] * len(pos_data['Edge name'])
     df_edges.drop_duplicates()
 
+    #Change color of edges, if they are part of the path
     df_edges.loc[df_edges['edges'].isin(route_1), 'Colors'] = 'red'
     df_edges.loc[df_edges['edges'].isin(route_1), 'Width'] = 5
 
@@ -197,12 +198,12 @@ def visual_3(route_1, route_2, route_3, text):
     nx.draw_networkx_edges(graph, pos=pos, edgelist=df_edges['edges'].values, edge_color=df_edges['Colors'],
                            width=df_edges['Width'])
 
-    # nx.draw_networkx_edges(graph, pos, edge_color='red', width=3)
     plt.text(0.05, 0.95, text, transform=plt.gca().transAxes, fontsize=14,verticalalignment='top')
 
     plt.show()
 
 def visual_2(route_1, route_2, text):
+    #Import necessary data
     pos_data = pd.read_csv("graph_imp_weighted.csv")
     pos_data = pos_data.drop_duplicates()
     df_vis = pd.DataFrame()
@@ -240,7 +241,6 @@ def visual_2(route_1, route_2, text):
     nx.draw_networkx_edges(graph, pos=pos, edgelist=df_edges['edges'].values, edge_color=df_edges['Colors'],
                            width=df_edges['Width'])
 
-    # nx.draw_networkx_edges(graph, pos, edge_color='red', width=3)
     plt.text(0.05, 0.95, text, transform=plt.gca().transAxes, fontsize=14,verticalalignment='top')
 
     plt.show()
